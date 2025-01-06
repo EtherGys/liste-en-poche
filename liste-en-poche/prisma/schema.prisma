@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model articles {
+  Id_Articles Int        @id
+  nom         String?    @db.VarChar(50)
+  acheter     Boolean?
+  contiens    contiens[]
+}
+
+model contiens {
+  Id_Listes   Int
+  Id_Articles Int
+  qte         Int?     @default(1)
+  listes      listes   @relation(fields: [Id_Listes], references: [Id_Listes], onDelete: NoAction, onUpdate: NoAction, map: "contiens_ibfk_1")
+  articles    articles @relation(fields: [Id_Articles], references: [Id_Articles], onDelete: NoAction, onUpdate: NoAction, map: "contiens_ibfk_2")
+
+  @@id([Id_Listes, Id_Articles])
+  @@index([Id_Articles], map: "Id_Articles")
+}
+
+model listes {
+  Id_Listes         Int        @id
+  nom               String?    @db.VarChar(50)
+  date_creation     DateTime?  @db.DateTime(0)
+  date_modification DateTime?  @db.DateTime(0)
+  createur          Int?
+  modificateur      Int?
+  contiens          contiens[]
+  possede           possede[]
+}
+
+model possede {
+  Id_Utilisateurs Int
+  Id_Listes       Int
+  utilisateurs    utilisateurs @relation(fields: [Id_Utilisateurs], references: [Id_Utilisateurs], onDelete: NoAction, onUpdate: NoAction, map: "possede_ibfk_1")
+  listes          listes       @relation(fields: [Id_Listes], references: [Id_Listes], onDelete: NoAction, onUpdate: NoAction, map: "possede_ibfk_2")
+
+  @@id([Id_Utilisateurs, Id_Listes])
+  @@index([Id_Listes], map: "Id_Listes")
+}
+
+model utilisateurs {
+  Id_Utilisateurs Int       @id
+  nom             String?   @db.VarChar(50)
+  prenom          String?   @db.VarChar(50)
+  mail            String?   @db.VarChar(50)
+  mdp             String?   @db.VarChar(50)
+  possede         possede[]
+}
