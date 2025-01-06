@@ -3,6 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt"
 import process from "process";
 import { PrismaClient } from "@prisma/client";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
 const prisma = new PrismaClient()
 
@@ -18,20 +19,23 @@ export const authOptions: NextAuthOptions =
             async authorize(credentials) {
                 // const { email, password } = credentials;                
                 try {
-                    const password = credentials?.password as string | Buffer;
-                    await prisma();
-                    const user = await User.findOne({ user_email: credentials?.email }).exec();
-                 
-                        const passwordsMatch = await bcrypt.compare(password, user.password);
-
-                        if (!passwordsMatch) return null;
-
-                        const selectedUser: any = {
-                            name: user.subscriber_firstname,
-                            email: user.subscriber_email,
+                    const res = await fetch(
+                        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/user/login`,
+                        {
+                            method: "POST",
+                            body: JSON.stringify(credentials),
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
                         }
-                        return selectedUser;
+                    );
+                    const user = await res.json();
                     
+                    if (res.ok && user) {
+                        return user;
+                    } else {
+                        return null;
+                    }
                 } catch (error) {
                     console.log("Error: ", error);
                 }
@@ -68,15 +72,16 @@ export const authOptions: NextAuthOptions =
             const userId = message.user.id;
             const email = message.user.email;
             const name = message.user.name;
-
+            
             if (!userId || !email) {
                 return
             }
-        
-
-            await connectToDB();
-           
+            
+            
+          
+            
         },
     },
     secret: process.env.NEXTAUTH_SECRET,
+    adapter: PrismaAdapter(prisma),
 };
