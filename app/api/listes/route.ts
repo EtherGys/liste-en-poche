@@ -4,9 +4,9 @@ import {NextRequest} from "next/server";
 export async function GET(req: NextRequest) {
     try {
 
-        const articles = await prisma.articles.findMany();
+        const listes = await prisma.listes.findMany();
 
-        return new Response(JSON.stringify(articles), { status: 201 })
+        return new Response(JSON.stringify(listes), { status: 201 })
 
 
     } catch (error) {
@@ -18,17 +18,16 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
     try {
+        const {nom, createur} = await req.json();
 
-        const {nom, acheter} = await req.json();
-
-        const article = await prisma.articles.create({
+        const liste = await prisma.listes.create({
             data: {
                 nom,
-                acheter
+                createur
             }
         });
 
-        return new Response(JSON.stringify(article), {status: 201})
+        return new Response(JSON.stringify(liste), {status: 201})
     } catch (error) {
         return new Response(JSON.stringify(error), {status: 500})
     }
