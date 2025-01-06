@@ -8,25 +8,26 @@ datasource db {
 }
 
 model articles {
-  Id_Articles Int        @id
-  nom         String?    @db.VarChar(50)
-  acheter     Boolean?
-  contiens    contiens[]
+  id_article Int        @id @default(autoincrement())
+  nom        String?    @db.VarChar(50)
+  acheter    Boolean?
+  contiens   contiens[]
 }
 
 model contiens {
-  Id_Listes   Int
-  Id_Articles Int
-  qte         Int?     @default(1)
-  listes      listes   @relation(fields: [Id_Listes], references: [Id_Listes], onDelete: NoAction, onUpdate: NoAction, map: "contiens_ibfk_1")
-  articles    articles @relation(fields: [Id_Articles], references: [Id_Articles], onDelete: NoAction, onUpdate: NoAction, map: "contiens_ibfk_2")
+  id_liste   Int
+  id_article Int
+  qte        Int?     @default(1)
+  articles   articles @relation(fields: [id_article], references: [id_article], onDelete: NoAction, onUpdate: NoAction, map: "id_article")
+  listes     listes   @relation(fields: [id_liste], references: [id_liste], onDelete: NoAction, onUpdate: NoAction, map: "id_liste")
 
-  @@id([Id_Listes, Id_Articles])
-  @@index([Id_Articles], map: "Id_Articles")
+  @@id([id_liste, id_article])
+  @@index([id_article], map: "id_article_idx")
+  @@index([id_liste], map: "list")
 }
 
 model listes {
-  Id_Listes         Int        @id
+  id_liste          Int        @id @default(autoincrement())
   nom               String?    @db.VarChar(50)
   date_creation     DateTime?  @db.DateTime(0)
   date_modification DateTime?  @db.DateTime(0)
@@ -37,20 +38,20 @@ model listes {
 }
 
 model possede {
-  Id_Utilisateurs Int
-  Id_Listes       Int
-  utilisateurs    utilisateurs @relation(fields: [Id_Utilisateurs], references: [Id_Utilisateurs], onDelete: NoAction, onUpdate: NoAction, map: "possede_ibfk_1")
-  listes          listes       @relation(fields: [Id_Listes], references: [Id_Listes], onDelete: NoAction, onUpdate: NoAction, map: "possede_ibfk_2")
+  id_utilisateur Int
+  id_liste       Int
+  listes         listes       @relation(fields: [id_liste], references: [id_liste], onDelete: NoAction, onUpdate: NoAction, map: "id_listes")
+  utilisateurs   utilisateurs @relation(fields: [id_utilisateur], references: [id_utilisateur], onDelete: NoAction, onUpdate: NoAction, map: "id_utilisateur")
 
-  @@id([Id_Utilisateurs, Id_Listes])
-  @@index([Id_Listes], map: "Id_Listes")
+  @@id([id_utilisateur, id_liste])
+  @@index([id_liste], map: "id_liste_idx")
 }
 
 model utilisateurs {
-  Id_Utilisateurs    Int     @id @default(autoincrement())
-  nom             String?   @db.VarChar(50)
-  prenom          String?   @db.VarChar(50)
-  mail            String?   @db.VarChar(50)
-  mdp             String?   @db.VarChar(50)
-  possede         possede[]
+  id_utilisateur Int       @id @default(autoincrement())
+  nom            String?   @db.VarChar(100)
+  prenom         String?   @db.VarChar(100)
+  mail           String?   @db.VarChar(255)
+  mdp            String?   @db.VarChar(255)
+  possede        possede[]
 }

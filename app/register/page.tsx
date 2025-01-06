@@ -3,16 +3,9 @@ import React from "react";
 import { useSession } from "next-auth/react";
 import RegisterForm from "@/components/forms/RegistrationForm";
 
-
 export default function RegistrationPage() {
   const { data: session, status } = useSession();
   
-
-
-
-
-
-
   return (
     <>
       {status === "authenticated" ? (

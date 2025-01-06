@@ -5,7 +5,7 @@ import prisma from "@/utils/prisma";
 
 
 // Update user 
-export async function PUT(req: NextRequest, res: NextResponse) {
+export async function PUT(req: NextRequest) {
   
     const { mail, nom, prenom, mdp, id } = await req.json();
 
@@ -13,7 +13,7 @@ export async function PUT(req: NextRequest, res: NextResponse) {
       
         const user = await prisma.utilisateurs.update({
 
-            where: { Id_Utilisateurs: Number(id) },
+            where: { id_utilisateur: Number(id) },
       
             
             data: { mail, nom, prenom, mdp },
