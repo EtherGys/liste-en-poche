@@ -1,9 +1,11 @@
 import { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt"
-import User from "../models/User";
 import process from "process";
+import { PrismaClient } from "@prisma/client";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 
+const prisma = new PrismaClient()
 
 export const authOptions: NextAuthOptions =
 {
@@ -17,24 +19,23 @@ export const authOptions: NextAuthOptions =
             async authorize(credentials) {
                 // const { email, password } = credentials;                
                 try {
-                    const password = credentials?.password as string | Buffer;
-                    await connectToD();
-                    const user = await User.findOne({ user_email: credentials?.email }).exec();
-                 
-                        const passwordsMatch = await bcrypt.compare(password, user.password);
-
-                        if (!passwordsMatch) return null;
-
-                        const selectedUser: any = {
-                            name: user.subscriber_firstname,
-                            email: user.subscriber_email,
-                            image: '',
-                            id: user._id,
-                            stripe_customer_id: user.stripe_customer_id
+                    const res = await fetch(
+                        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/user/login`,
+                        {
+                            method: "POST",
+                            body: JSON.stringify(credentials),
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
                         }
-                        console.log(selectedUser);
-                        return selectedUser;
+                    );
+                    const user = await res.json();
                     
+                    if (res.ok && user) {
+                        return user;
+                    } else {
+                        return null;
+                    }
                 } catch (error) {
                     console.log("Error: ", error);
                 }
@@ -71,15 +72,16 @@ export const authOptions: NextAuthOptions =
             const userId = message.user.id;
             const email = message.user.email;
             const name = message.user.name;
-
+            
             if (!userId || !email) {
                 return
             }
-        
-
-            await connectToDB();
-           
+            
+            
+          
+            
         },
     },
     secret: process.env.NEXTAUTH_SECRET,
+    adapter: PrismaAdapter(prisma),
 };
