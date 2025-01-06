@@ -47,7 +47,7 @@ model possede {
 }
 
 model utilisateurs {
-  Id_Utilisateurs Int       @id
+  Id_Utilisateurs    Int     @id @default(autoincrement())
   nom             String?   @db.VarChar(50)
   prenom          String?   @db.VarChar(50)
   mail            String?   @db.VarChar(50)
