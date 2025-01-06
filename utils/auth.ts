@@ -1,9 +1,7 @@
 import { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt"
-
-import { connectToDB } from "./utils/database";
-import User from "./models/User";
+import User from "../models/User";
 import process from "process";
 
 
@@ -20,7 +18,7 @@ export const authOptions: NextAuthOptions =
                 // const { email, password } = credentials;                
                 try {
                     const password = credentials?.password as string | Buffer;
-                    await connectToDB();
+                    await connectToD();
                     const user = await User.findOne({ user_email: credentials?.email }).exec();
                  
                         const passwordsMatch = await bcrypt.compare(password, user.password);
