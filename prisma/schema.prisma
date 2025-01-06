@@ -18,8 +18,8 @@ model contiens {
   id_liste   Int
   id_article Int
   qte        Int?     @default(1)
-  articles   articles @relation(fields: [id_article], references: [id_article], onDelete: NoAction, onUpdate: NoAction, map: "id_article")
-  listes     listes   @relation(fields: [id_liste], references: [id_liste], onDelete: NoAction, onUpdate: NoAction, map: "id_liste")
+  articles   articles @relation(fields: [id_article], references: [id_article], onDelete: Cascade, onUpdate: NoAction, map: "id_article")
+  listes     listes   @relation(fields: [id_liste], references: [id_liste], onDelete: Cascade, onUpdate: NoAction, map: "id_liste")
 
   @@id([id_liste, id_article])
   @@index([id_article], map: "id_article_idx")
@@ -49,9 +49,9 @@ model possede {
 
 model utilisateurs {
   id_utilisateur Int       @id @default(autoincrement())
-  nom            String?   @db.VarChar(100)
-  prenom         String?   @db.VarChar(100)
-  mail           String?   @db.VarChar(255)
-  mdp            String?   @db.VarChar(255)
+  nom            String    @db.VarChar(100)
+  prenom         String    @db.VarChar(100)
+  mail           String    @unique(map: "mail_UNIQUE") @db.VarChar(255)
+  mdp            String    @db.VarChar(255)
   possede        possede[]
 }

@@ -27,13 +27,13 @@ export default function LoginForm() {
         password: user.password,
         redirect: false,
       });
+console.log("res", res);
 
       if (res?.error) {
         setError(true);
         return;
       }
 
-      router.push(``);
     } catch (error) {
       console.log(error);
     }

@@ -4,8 +4,9 @@ import bcrypt from "bcrypt"
 import process from "process";
 import { PrismaClient } from "@prisma/client";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import prisma from "./prisma";
 
-const prisma = new PrismaClient()
+
 
 export const authOptions: NextAuthOptions =
 {
@@ -16,26 +17,38 @@ export const authOptions: NextAuthOptions =
                 email: {},
                 password: {}
             },
-            async authorize(credentials) {
-                // const { email, password } = credentials;                
+            async authorize(credentials) {               
                 try {
-                    const res = await fetch(
-                        `${process.env.NEXT_PUBLIC_NEXTAUTH_URL}/api/user/login`,
-                        {
-                            method: "POST",
-                            body: JSON.stringify(credentials),
-                            headers: {
-                                "Content-Type": "application/json",
-                            },
-                        }
-                    );
-                    const user = await res.json();
+                    console.log("credentials", credentials);
                     
-                    if (res.ok && user) {
-                        return user;
-                    } else {
+                    const password = credentials?.password as string | Buffer;
+                    
+                    const user = await prisma.utilisateurs.findFirst({
+                        where: {
+                            mail: credentials?.email
+                        }
+                    })
+                
+
+
+                    if (!user) {
                         return null;
                     }
+
+                    if (user != null) {
+                        const passwordsMatch = await bcrypt.compare(password, user.mdp as string);
+
+                        if (!passwordsMatch) return null;
+
+                        const selectedUser: any = {
+                            name: `${user} `,
+                            email:" user.user_email",
+                            image: '',
+                            id: "user._id"
+                        }
+                        return selectedUser;
+
+                    } 
                 } catch (error) {
                     console.log("Error: ", error);
                 }
@@ -54,8 +67,7 @@ export const authOptions: NextAuthOptions =
                 ...session,
                 user: {
                     ...session.user,
-                    email: token.email,
-                    id: token.id
+                    id: token
                 },
                 error: ""
             }
@@ -66,21 +78,6 @@ export const authOptions: NextAuthOptions =
     },
     session: {
         strategy: 'jwt'
-    },
-    events: {
-        async createUser(message) {
-            const userId = message.user.id;
-            const email = message.user.email;
-            const name = message.user.name;
-            
-            if (!userId || !email) {
-                return
-            }
-            
-            
-          
-            
-        },
     },
     secret: process.env.NEXTAUTH_SECRET,
     adapter: PrismaAdapter(prisma),
