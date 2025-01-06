@@ -1,9 +1,10 @@
 import { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt"
-import User from "../models/User";
 import process from "process";
+import { PrismaClient } from "@prisma/client";
 
+const prisma = new PrismaClient()
 
 export const authOptions: NextAuthOptions =
 {
@@ -18,7 +19,7 @@ export const authOptions: NextAuthOptions =
                 // const { email, password } = credentials;                
                 try {
                     const password = credentials?.password as string | Buffer;
-                    await connectToD();
+                    await prisma();
                     const user = await User.findOne({ user_email: credentials?.email }).exec();
                  
                         const passwordsMatch = await bcrypt.compare(password, user.password);
@@ -28,11 +29,7 @@ export const authOptions: NextAuthOptions =
                         const selectedUser: any = {
                             name: user.subscriber_firstname,
                             email: user.subscriber_email,
-                            image: '',
-                            id: user._id,
-                            stripe_customer_id: user.stripe_customer_id
                         }
-                        console.log(selectedUser);
                         return selectedUser;
                     
                 } catch (error) {
