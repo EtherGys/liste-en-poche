@@ -28,7 +28,7 @@ export default function LoginForm() {
         redirect: false,
       });
       
-      router.push('/')
+      router.push('/login')
       if (res?.error) {
         setError(true);
         return;
