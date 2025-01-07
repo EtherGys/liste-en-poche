@@ -23,9 +23,11 @@ export function NavBar() {
 
   return (
     <div className="font-roboto">
+
       {/* Desktop Navigation */}
       <nav className="bg-red-500 p-4 sticky top-0 z-10 md:flex hidden">
         <div className="flex flex-wrap justify-between w-screen items-center mx-auto max-w-screen-xl">
+          
           <a href="/" className="text-white flex items-center">
             <Image
               className="w-6 h-6 mt-1 mr-2"
@@ -36,15 +38,21 @@ export function NavBar() {
             />
             <p className="self-center text-2xl font-semibold">Liste en Poche</p>
           </a>
+          
           <div className="flex items-center gap-4">
             {session?.user ? (
               <>
-                <Link href="/">
+                <Link href={`/${session?.user.id}/create`}>
                   <button className="text-white text-lg px-4 py-2 rounded">
                     Créer une nouvelle liste
                   </button>
                 </Link>
-                <Link href="/">
+                <Link href={`/${session?.user.id}/listes`}>
+                  <button className="text-white text-lg px-4 py-2 rounded">
+                    Toutes mes listes
+                  </button>
+                </Link>
+                <Link href={`/${session?.user.id}`}>
                   <button className="text-white text-lg px-4 py-2 rounded">
                     Mon Profil
                   </button>
@@ -66,9 +74,9 @@ export function NavBar() {
         </div>
       </nav>
 
+
       {/* Mobile Navigation */}
       <div className="md:hidden flex fixed z-40 w-screen">
-        {/* Burger Menu */}
         <div className="flex justify-between w-full bg-red-500 p-4">
           <a href="/" className="text-white flex items-center">
             <Image
@@ -114,6 +122,7 @@ export function NavBar() {
             >
               Nouvelle liste
             </Link>
+            
             <Link
               href="/profil"
               className="my-4 text-lg"
