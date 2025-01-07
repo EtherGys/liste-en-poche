@@ -72,7 +72,7 @@ export function NavBar() {
 
       <nav>
         <div className="logo">
-			<Link href="/">LOGO LA</Link>
+			<Link href="/"> <Image src="/image.png" alt="Notre logo" width={50} height={50}/></Link>
 		</div>
 
         {/* Navigation pour l'utilisateur connecté */}
