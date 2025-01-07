@@ -10,6 +10,7 @@ export default function Profile() {
     const router = useRouter()
     const params = useParams();
     const [listes, setListes] = useState<any[]>([]);
+
     const [user, setUser] = useState({
         email: "",
         firstname: "",
@@ -18,9 +19,17 @@ export default function Profile() {
 
     const fetchListes = async (id: any) => {
         const response = await fetch(`/api/possede`);
-        const data = await response.json();
-        setListes(data);
+        const listes = await response.json();
+        // listes.forEach(async (liste: any) => {
+        //   const response = await fetch(`/api/listes`);
+        //   const articles = await response.json();
+        //   listes.articles = articles
+        // });
+        setListes(listes);
       };
+
+  console.log(listes);
+  
     
     const fetchUserData = async () => {
         const response = await fetch(`/api/user/${params.id}`);
@@ -50,8 +59,8 @@ export default function Profile() {
     
     const deleteListe = async (id: string) => {
         try {
-          const response = await fetch(`/api/user/${params.id}/delete_liste`, {
-            method: "PATCH",
+          const response = await fetch(`/api/listes/${id}`, {
+            method: "DELETE",
             body: JSON.stringify({
               id_liste: id,
             }),
@@ -147,8 +156,15 @@ export default function Profile() {
                     {listes.length > 0 && listes.map((liste: any) => (
                      
                       <div className="sm:w-1/2 flex items-start space-x-2 Space-y-2 pb-4" key={liste.id_liste}>
-                        
-                        <div className="flex flex-col items-start w-1/3 space-y-0">
+                           <div className="w-2/3 text-left text-darkGray">
+                          <div className="text-base font-medium">
+                            {liste.nom}
+                          </div>
+                          <div className="text-sm">
+                            ({liste.date_creation})
+                          </div>
+                        </div>
+                        <div className="">
                      
                           <a
                             onClick={() => deleteListe(liste.id_liste)}
@@ -157,16 +173,39 @@ export default function Profile() {
                            Supprimer la liste
                           </a>
                         </div>
-    
-                        
-                        <div className="w-2/3 text-left text-darkGray">
-                          <div className="text-base font-medium">
-                            {liste.nom}
-                          </div>
-                          <div className="text-sm">
-                            {liste.date_creation}
-                          </div>
-                        </div>
+                     
+                        {liste.articles && liste.articles.map((article: any) => (
+                     
+                     <div className="sm:w-1/2 flex items-start space-x-2 Space-y-2 pb-4" key={article.id_article}>
+                       
+                       <div className="flex flex-col items-start w-1/3 space-y-0">
+                         <a
+                           onClick={() => deleteListe(article.id_article)}
+                           className="w-full py-1 px-1 bg-black text-white text-xs flex items-center justify-center cursor-pointer group hover:bg-mediumGreen hover:text-white transition-all duration-300"
+                         >
+                          Retirer l'article de la liste
+                         </a>
+                       </div>
+                       <div className="flex flex-col items-start w-1/3 space-y-0">
+                         <a
+                           onClick={() => deleteListe(article.id_article)}
+                           className="w-full py-1 px-1 bg-black text-white text-xs flex items-center justify-center cursor-pointer group hover:bg-mediumGreen hover:text-white transition-all duration-300"
+                         >
+                          Modifier l'article
+                         </a>
+                       </div>
+                       
+                       <div className="w-2/3 text-left text-darkGray">
+                         <div className="text-base font-medium">
+                           {article.nom}
+                         </div>
+                         <div className="text-sm">
+                           Qte : {article.qte}
+                         </div>
+                       </div>
+                     </div>
+                     
+                   ))}
                       </div>
                       
                     ))}

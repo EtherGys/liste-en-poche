@@ -37,11 +37,12 @@ export async function PUT(req: NextRequest, params: any) {
 }
 
 export async function DELETE(req: NextRequest, params: any) {
-    const id = params.params.id;
+
+    const id = await params.params.id;
 
     try {
         await prisma.listes.delete({
-            where: { id_liste: parseInt(id) },
+            where: { id_liste: Number(id) },
         });
 
         return NextResponse.json({ message: "Liste supprimée" }, { status: 200 });
