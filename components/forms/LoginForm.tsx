@@ -101,6 +101,11 @@ export default function LoginForm() {
               className="mt-2 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
             />
             {errorHandler(errors.password)}
+            <p className="text-center text-sm text-gray-600 mt-4">
+              <NavigationLink href="/reset-password" className="text-blue-600 underline">
+                Mot de passe perdu ?
+              </NavigationLink>
+            </p>
           </div>
 
           {/* Message d'erreur */}
