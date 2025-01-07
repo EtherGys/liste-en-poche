@@ -13,13 +13,13 @@ export default function LoginForm() {
   });
   const { data: session, status } = useSession();
   const router = useRouter();
-
+  
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<any>();
-
+  
   const onSubmit: SubmitHandler<any> = async () => {
     try {
       const res = await signIn("credentials", {
@@ -27,24 +27,24 @@ export default function LoginForm() {
         password: user.password,
         redirect: false,
       });
-
+      
+      router.push('/')
       if (res?.error) {
         setError(true);
         return;
       }
-
-      router.push(``);
+      
     } catch (error) {
       console.log(error);
     }
   };
-
+  
   function errorHandler(errorInput: any) {
     return errorInput?.type === "required" ? (
       <p className="text-sm text-red-500">Ce champ est requis</p>
     ) : null;
   }
-
+  
   return (
     <section className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white shadow-md rounded-lg px-8 py-10 w-full max-w-md">
