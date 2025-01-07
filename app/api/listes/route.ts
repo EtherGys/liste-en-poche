@@ -2,6 +2,7 @@ import prisma from "@/utils/prisma";
 import {NextRequest} from "next/server";
 import {getServerSession} from "next-auth/next";
 import {authOptions} from "@/utils/auth";
+import {validateSession} from "@/utils/validateSession";
 
 /**
  * Récupère toutes les listes publiques
@@ -26,7 +27,7 @@ export async function GET() {
  */
 export async function POST(req: NextRequest) {
     try {
-        const userId = parseInt(req.headers.get("userId")!);
+        const userId = parseInt(await validateSession(req));
         const {nom, publique, articles} = await req.json();
 
         const liste = await prisma.listes.create({
