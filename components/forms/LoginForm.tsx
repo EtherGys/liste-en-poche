@@ -54,7 +54,7 @@ export default function LoginForm() {
         {/* Lien d'inscription */}
         <p className="text-center text-sm text-gray-600 mt-4">
           Première visite ?{" "}
-          <NavigationLink href="/" className="text-blue-600 underline">
+          <NavigationLink href="/register" className="text-blue-600 underline">
             Inscription
           </NavigationLink>
         </p>
