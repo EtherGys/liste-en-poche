@@ -5,10 +5,10 @@ import prisma from "@/utils/prisma";
 
 
 // Update user 
-export async function PUT(req: NextRequest) {
+export async function PUT(req: NextRequest, params: any) {
   
-    const { mail, nom, prenom, mdp, id } = await req.json();
-
+    const { mail, nom, prenom } = await req.json();
+const id = await params.params.id
     try {
       
         const user = await prisma.utilisateurs.update({
@@ -16,16 +16,37 @@ export async function PUT(req: NextRequest) {
             where: { id_utilisateur: Number(id) },
       
             
-            data: { mail, nom, prenom, mdp },
+            data: { mail, nom, prenom },
       
           });
           
-            return new Response(JSON.stringify(user), { status: 201 })
+            return new Response(JSON.stringify(user), { status: 200 })
         
        
 
     } catch (error) {
         console.log(error);
         return new Response('Failed to create a new user', { status: 500 })
+    }
+}
+
+// Get user 
+export async function GET(req: NextRequest, params: any) {
+    try {
+      
+        const user = await prisma.utilisateurs.findUnique({
+
+            where: { id_utilisateur: Number(params.params.id) },
+      
+      
+          });
+          
+            return new Response(JSON.stringify(user), { status: 200 })
+        
+       
+
+    } catch (error) {
+        console.log(error);
+        return new Response(`Failed to get user ${params.params.id}`, { status: 500 })
     }
 }

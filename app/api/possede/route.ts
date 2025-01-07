@@ -16,7 +16,7 @@ export async function GET() {
         });
     }
 
-    const userId = session.user.id.id;
+    const userId = session.user.id;
 
     if (!userId) {
         return new Response(JSON.stringify({ message: "ID utilisateur introuvable" }), {
@@ -27,7 +27,7 @@ export async function GET() {
 
     const lists = await prisma.possede.findMany({
         where: {
-            id_utilisateur: userId,
+            id_utilisateur: Number(userId),
         },
     });
 
@@ -47,13 +47,13 @@ export async function POST(req: Request) {
         });
     }
 
-    const userId = session.user.id.id;
+    const userId = session.user.id;
     const body = await req.json();
     const { id_liste } = body;
 
     const created = await prisma.possede.create({
         data: {
-            id_utilisateur: userId,
+            id_utilisateur: Number(userId),
             id_liste,
         },
     });

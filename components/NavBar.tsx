@@ -16,6 +16,9 @@ export function NavBar() {
     setUpProviders();
   }, []);
 
+
+
+
   return (
     <>
       <style jsx>{`
@@ -23,7 +26,7 @@ export function NavBar() {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          background-color: #333;
+          background-color: #CFDEE2;
           padding: 15px 30px;
           position: sticky;
           top: 0;
@@ -79,9 +82,9 @@ export function NavBar() {
         <div className="nav-links">
           {session?.user ? (
             <>
-              <Link href="/">Créer une liste</Link>
-              <Link href="/">Toutes mes listes</Link>
-              <Link href="/">Mon Profil</Link>
+              <Link className="pt-2" href={`/${session?.user.id}/create`}>Créer une liste</Link>
+              <Link className="pt-2" href={`/${session?.user.id}/listes`}>Toutes mes listes</Link>
+              <Link className="pt-2" href={`/${session?.user.id}`}>Mon Profil</Link>
               <button onClick={() => signOut()}>Déconnexion</button>
             </>
           ) : (
