@@ -63,13 +63,14 @@ export const authOptions: NextAuthOptions =
         },
         async session({ session, token }) {
             return {
-                ...session,
-                user: {
-                    ...session.user,
-                    id: token
-                },
-                error: ""
-            }
+              ...session,
+              user: {
+                  ...session.user,
+                  email: token.email,
+                  id: token.id
+              },
+              error: ""
+          }
         }
     },
     pages: {
