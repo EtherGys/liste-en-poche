@@ -2,7 +2,6 @@ import { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt"
 import process from "process";
-import { PrismaClient } from "@prisma/client";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "./prisma";
 
@@ -19,8 +18,6 @@ export const authOptions: NextAuthOptions =
             },
             async authorize(credentials) {               
                 try {
-                    console.log("credentials", credentials);
-                    
                     const password = credentials?.password as string | Buffer;
                     
                     const user = await prisma.utilisateurs.findFirst({
