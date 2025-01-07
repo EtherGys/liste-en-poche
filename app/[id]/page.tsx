@@ -1,4 +1,5 @@
 'use client'
+import { Modal } from "@/components/Modal";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -8,8 +9,11 @@ import { toast, ToastContainer } from "react-toastify";
 export default function Profile() {
     const { data: session, status } = useSession();
     const router = useRouter()
+
     const params = useParams();
     const [listes, setListes] = useState<any[]>([]);
+    const [modal, setModal] = useState<boolean>(false);
+    const [modalId, setModalId] = useState<string>("");
 
     const [user, setUser] = useState({
         email: "",
@@ -77,7 +81,22 @@ export default function Profile() {
     useEffect(() => {
         fetchUserData();
     }, []);
-    
+
+    const deleteArticle = async (id: string) => {
+        try {
+         
+        } catch (error) {
+          console.log(error);
+        }
+      };
+
+    const EditArticle = async (id: string) => {
+        setModal(true)
+        setModalId(id)
+      };
+
+
+
     if (status === "unauthenticated") {
         router.push('/login')
     }
@@ -85,6 +104,7 @@ export default function Profile() {
     return (
         <div className="min-h-screen flex items-center justify-center bg-top bg-no-repeat sm:bg-cover sm:bg-center sm:bg-[url('/pictures/connexionIllus.png')] bg-[url('/pictures/IllusConnexion-Mobile.png')] bg-contain">
              <ToastContainer />
+             {modal && <Modal id={modalId}/>}
           {status === "authenticated" && (
             <main className="flex flex-col items-center justify-start sm:justify-center p-8 md:p-32">
               <div className="bg-white pb-6 sm:pb-8 lg:pb-20 w-full max-w-4xl lg:max-w-6xl xl:max-w-7xl text-center sm:py-1 px-6 sm:px-8 lg:px-20 xl:px-60">
@@ -150,7 +170,8 @@ export default function Profile() {
                 <div className="flex justify-center">
                   <div className="border-mediumGreen border-t w-full my-2"></div>
                 </div>
-    
+            
+
                 <div className="container mx-auto py-4">
                   <div className="flex flex-col sm:flex-row flex-wrap items-start space-y-4 sm:space-y-0">
                     {listes.length > 0 && listes.map((liste: any) => (
@@ -180,7 +201,7 @@ export default function Profile() {
                        
                        <div className="flex flex-col items-start w-1/3 space-y-0">
                          <a
-                           onClick={() => deleteListe(article.id_article)}
+                           onClick={() => deleteArticle(article.id_article)}
                            className="w-full py-1 px-1 bg-black text-white text-xs flex items-center justify-center cursor-pointer group hover:bg-mediumGreen hover:text-white transition-all duration-300"
                          >
                           Retirer l'article de la liste
@@ -188,7 +209,7 @@ export default function Profile() {
                        </div>
                        <div className="flex flex-col items-start w-1/3 space-y-0">
                          <a
-                           onClick={() => deleteListe(article.id_article)}
+                           onClick={() => EditArticle(article.id_article)}
                            className="w-full py-1 px-1 bg-black text-white text-xs flex items-center justify-center cursor-pointer group hover:bg-mediumGreen hover:text-white transition-all duration-300"
                          >
                           Modifier l'article
