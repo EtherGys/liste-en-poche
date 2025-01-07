@@ -28,11 +28,13 @@ export default function LoginForm() {
         redirect: false,
       });
       
-      router.push('/login')
+      
       if (res?.error) {
         setError(true);
+        router.push('/login')
         return;
       }
+      router.push('/')
       
     } catch (error) {
       console.log(error);
@@ -76,6 +78,10 @@ export default function LoginForm() {
               value={user.email}
               {...register("email", {
                 required: true,
+                pattern: {
+                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                  message: "L'email doit être valide.",
+                },
                 onChange: (e) => setUser({ ...user, email: e.target.value }),
               })}
               placeholder="Votre email"
