@@ -34,7 +34,7 @@ export default function LoginForm() {
         router.push('/login')
         return;
       }
-      router.push('/')
+      router.push('/profil')
       
     } catch (error) {
       console.log(error);
