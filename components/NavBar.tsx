@@ -82,9 +82,9 @@ export function NavBar() {
         <div className="nav-links">
           {session?.user ? (
             <>
-              <Link className="pt-2" href="/">Créer une liste</Link>
-              <Link className="pt-2" href="/">Toutes mes listes</Link>
-              <Link className="pt-2" href={`${session?.user.id}`}>Mon Profil</Link>
+              <Link className="pt-2" href={`/${session?.user.id}/create`}>Créer une liste</Link>
+              <Link className="pt-2" href={`/${session?.user.id}/listes`}>Toutes mes listes</Link>
+              <Link className="pt-2" href={`/${session?.user.id}`}>Mon Profil</Link>
               <button onClick={() => signOut()}>Déconnexion</button>
             </>
           ) : (
