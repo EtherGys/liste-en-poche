@@ -51,8 +51,7 @@ export function NavBar() {
                 </Link>
                 <button
                   onClick={() => signOut()}
-                  className="bg-transparent text-white border-2 border-white px-6 py-2 rounded-full hover:bg-red-600"
-                >
+                  className="bg-white text-red-400 border-2 border-white px-6 py-2 rounded-full hover:bg-red-600 hover:text-white font-bold">
                   Déconnexion
                 </button>
               </>
@@ -125,7 +124,7 @@ export function NavBar() {
             {session?.user ? (
               <button
                 onClick={() => signOut()}
-                className="bg-transparent text-white border-2 border-white px-6 py-2 rounded-full hover:bg-red-600"
+                className="bg-white text-red-400 border-2 border-white px-6 py-2 rounded-full hover:bg-red-600 hover:text-white font-bold"
               >
                 Déconnexion
               </button>
