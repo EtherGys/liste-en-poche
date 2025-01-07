@@ -41,10 +41,9 @@ export const authOptions: NextAuthOptions =
                         if (!passwordsMatch) return null;
 
                         const selectedUser: any = {
-                            name: `${user} `,
-                            email:" user.user_email",
-                            image: '',
-                            id: "user._id"
+                            name: `${user.prenom} ${user.nom} `,
+                            email:user.mail ,
+                            id: user.id_utilisateur
                         }
                         return selectedUser;
 
