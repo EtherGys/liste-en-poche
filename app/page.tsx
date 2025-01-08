@@ -43,15 +43,15 @@ export default function Home() {
       {/* Connexion ou va sur le profil */}
       <div className="flex justify-center gap-4">
         {session?.user ? (
-          <Link href="/profil">
+          <Link href={`/${session?.user.id}/create`}>
             <button className="bg-red-500 text-white py-3 px-6 rounded-full hover:bg-red-600 transition duration-300">
-              Commencer
+              Commencer une nouvelle liste
             </button>
           </Link>
         ) : (
           <Link href="/login">
             <button className="bg-red-500 text-white py-3 px-6 rounded-full hover:bg-red-600 transition duration-300">
-              Connexion
+              Commencer
             </button>
           </Link>
         )}
