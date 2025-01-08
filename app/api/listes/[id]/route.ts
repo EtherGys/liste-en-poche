@@ -2,12 +2,13 @@ import {NextRequest, NextResponse} from "next/server";
 import prisma from "@/utils/prisma";
 import {getServerSession} from "next-auth/next";
 import {authOptions} from "@/utils/auth";
+import {validateSession} from "@/utils/validateSession";
 
 /**
  * Récupère une liste depuis son ID
  */
 export async function GET(req: NextRequest, params: any) {
-    const userId = parseInt(req.headers.get("userId")!);
+    const userId = parseInt(await validateSession(req));
     const id  = params.params.id;
 
     const canView = await prisma.possede.findFirst({
@@ -40,7 +41,7 @@ export async function GET(req: NextRequest, params: any) {
 }
 
 export async function PUT(req: NextRequest, params: any) {
-    const userId = parseInt(req.headers.get("userId")!);
+    const userId = parseInt(await validateSession(req));
     const id  = params.params.id;
 
     const canView = await prisma.possede.findFirst({
@@ -93,8 +94,7 @@ export async function PUT(req: NextRequest, params: any) {
 }
 
 export async function DELETE(req: NextRequest, params: any) {
-
-    const userId = parseInt(req.headers.get("userId")!);
+    const userId = parseInt(await validateSession(req));
 
     const id = await params.params.id;
 

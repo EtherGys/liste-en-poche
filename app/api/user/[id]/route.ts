@@ -1,6 +1,5 @@
 "use server"
 import { NextResponse, NextRequest } from "next/server";
-import bcrypt from "bcrypt";
 import prisma from "@/utils/prisma";
 
 
