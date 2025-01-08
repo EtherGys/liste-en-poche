@@ -96,7 +96,7 @@ export async function PUT(req: NextRequest, params: any) {
 export async function DELETE(req: NextRequest, params: any) {
     const userId = parseInt(await validateSession(req));
 
-    const id = params.params.id;
+    const id = await params.params.id;
 
     try {
 
@@ -114,6 +114,18 @@ export async function DELETE(req: NextRequest, params: any) {
 
         await prisma.listes.delete({
             where: { id_liste: parseInt(id) },
+        });
+
+        if (!liste) {
+            return NextResponse.json({ error: "Liste non trouvée" }, { status: 404 });
+        }
+
+        if (liste.createur !== userId) {
+            return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+        }
+
+        await prisma.listes.delete({
+            where: { id_liste: Number(id) },
         });
 
         return NextResponse.json({ message: "Liste supprimée" }, { status: 200 });
