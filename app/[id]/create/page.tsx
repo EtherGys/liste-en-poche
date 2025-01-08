@@ -1,10 +1,22 @@
+'use client'
+import { useSession } from "next-auth/react";
 import Image from "next/image";
+import NewListForm from "@/components/forms/NewListForm";
+import { useRouter } from "next/navigation";
+
 
 export default function Create() {
+  const { data: session, status } = useSession();
+  const router = useRouter()
+
+  if (status === "unauthenticated") {
+    router.push('/login')
+  }
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-     <p>Page create</p>
-       
-    </div>
+    <>
+      {status === "authenticated" &&
+        <NewListForm />
+      }
+    </>
   );
 }

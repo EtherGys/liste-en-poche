@@ -17,6 +17,7 @@ export function NavBar() {
     setUpProviders();
   }, []);
 
+
   const generalLinkstyle = "p-4 hover:bg-[#4F4141]";
   const selectedLinkstyle =
     "p-4 hover:bg-[#4F4141] bg-gray-300 text-gray-700 hover:text-gray-500 font-semibold border-b-4 border-[#E7A100]";

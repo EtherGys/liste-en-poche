@@ -1,6 +1,6 @@
 import { NextAuthOptions } from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials";
-import bcrypt from "bcrypt"
+import bcrypt from "bcryptjs";
 import process from "process";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "./prisma";
@@ -33,7 +33,7 @@ export const authOptions: NextAuthOptions =
                     }
 
                     if (user != null) {
-                        const passwordsMatch = await bcrypt.compare(password, user.mdp as string);
+                        const passwordsMatch =  bcrypt.compare(password.toString(), user.mdp);
 
                         if (!passwordsMatch) return null;
 
@@ -60,13 +60,14 @@ export const authOptions: NextAuthOptions =
         },
         async session({ session, token }) {
             return {
-                ...session,
-                user: {
-                    ...session.user,
-                    id: token
-                },
-                error: ""
-            }
+              ...session,
+              user: {
+                  ...session.user,
+                  email: token.email,
+                  id: token.id
+              },
+              error: ""
+          }
         }
     },
     pages: {
