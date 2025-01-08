@@ -193,6 +193,10 @@ export default function RegisterForm() {
       required: true,
       minLength: 2,
       maxLength: 150,
+      pattern: {
+        value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+        message: "L'email doit être valide.",
+      },
       onChange: (e) =>
         setUser({
         ...user,

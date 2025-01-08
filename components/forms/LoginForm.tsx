@@ -28,11 +28,13 @@ export default function LoginForm() {
         redirect: false,
       });
       
-      router.push('/')
+      
       if (res?.error) {
         setError(true);
+        router.push('/login')
         return;
       }
+      router.push('/profil')
       
     } catch (error) {
       console.log(error);
@@ -54,7 +56,7 @@ export default function LoginForm() {
         {/* Lien d'inscription */}
         <p className="text-center text-sm text-gray-600 mt-4">
           Première visite ?{" "}
-          <NavigationLink href="/register" className="text-blue-600 underline">
+          <NavigationLink href="/register" className="text-red-500 underline">
             Inscription
           </NavigationLink>
         </p>
@@ -76,10 +78,14 @@ export default function LoginForm() {
               value={user.email}
               {...register("email", {
                 required: true,
+                pattern: {
+                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                  message: "L'email doit être valide.",
+                },
                 onChange: (e) => setUser({ ...user, email: e.target.value }),
               })}
               placeholder="Votre email"
-              className="mt-2 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+              className="mt-2 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 text-gray-900"
             />
             {errorHandler(errors.email)}
           </div>
@@ -98,11 +104,11 @@ export default function LoginForm() {
                 onChange: (e) => setUser({ ...user, password: e.target.value }),
               })}
               placeholder="Votre mot de passe"
-              className="mt-2 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+              className="mt-2 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 text-gray-900"
             />
             {errorHandler(errors.password)}
             <p className="text-center text-sm text-gray-600 mt-4">
-              <NavigationLink href="/reset-password" className="text-blue-600 underline">
+              <NavigationLink href="/reset-password" className="text-red-500 underline">
                 Mot de passe perdu ?
               </NavigationLink>
             </p>
@@ -114,7 +120,7 @@ export default function LoginForm() {
           {/* Bouton de soumission */}
           <button
             type="submit"
-            className="w-full py-2 px-4 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full py-2 px-4 bg-red-500 text-white text-sm font-medium rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
           >
             Connexion
           </button>
