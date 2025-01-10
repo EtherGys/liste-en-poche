@@ -1,6 +1,6 @@
 "use server"
 import { NextResponse, NextRequest } from "next/server";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 import prisma from "@/utils/prisma";
 
 
@@ -10,14 +10,14 @@ export async function POST(req: NextRequest) {
     
     try {
         const mdp =  bcrypt.hashSync(password as string, 10);
-        
+        console.log(mdp);
+        console.log(mail, nom, prenom, mdp);
         const newUser = await prisma.utilisateurs.create({
             data: { mail, nom, prenom, mdp },
         });
-        
         return new Response(JSON.stringify(newUser), { status: 201 })
-    } catch (error) {
-      
+    } catch (error:any) {
+        console.log(error.message);
         return new Response(JSON.stringify(error), { status: 500 })
     }
 }

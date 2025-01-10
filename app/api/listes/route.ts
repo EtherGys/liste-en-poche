@@ -30,6 +30,9 @@ export async function POST(req: NextRequest) {
         const userId = parseInt(await validateSession(req));
         const {nom, publique, articles} = await req.json();
 
+        console.log(userId);
+        console.log(articles)
+
         const liste = await prisma.listes.create({
             data: {
                 nom,

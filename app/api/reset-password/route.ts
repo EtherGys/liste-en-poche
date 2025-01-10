@@ -1,6 +1,6 @@
 "use server";
 import { NextRequest } from "next/server";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 import prisma from "@/utils/prisma";
 
 // Update user password
