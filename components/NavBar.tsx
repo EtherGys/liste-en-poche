@@ -41,7 +41,7 @@ export function NavBar() {
                     Créer une nouvelle liste
                   </button>
                 </Link>
-                <Link href={`/${session.user.id}/listes`}>
+                <Link href={`/listes`}>
                   <button className="text-white text-lg px-4 py-2 rounded">
                     Toutes mes listes
                   </button>
