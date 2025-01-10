@@ -64,6 +64,14 @@ export async function POST(req: NextRequest) {
             });
         }
 
+        // Création lien liste/ user
+        await prisma.possede.create({
+            data: {
+                id_utilisateur: userId,
+                id_liste: liste.id_liste
+            }
+        });
+
         console.log("Articles ajoutés à la liste");
         return new Response(JSON.stringify(liste), {status: 201})
     } catch (error) {
