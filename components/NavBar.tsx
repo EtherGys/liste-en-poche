@@ -122,13 +122,6 @@ export function NavBar() {
                   Nouvelle liste
                 </Link>
                 <Link
-                  href={`/${session.user.id}/listes`}
-                  className="my-4 text-lg"
-                  onClick={() => setToggleDropdown(false)}
-                >
-                  Mes listes
-                </Link>
-                <Link
                   href={`/${session.user.id}`}
                   className="my-4 text-lg"
                   onClick={() => setToggleDropdown(false)}
