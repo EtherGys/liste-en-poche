@@ -18,20 +18,49 @@ export async function GET(req: NextRequest, params: any) {
         },
     });
 
-    if (!canView) {
+    const liste = await prisma.listes.findUnique({
+        where: { id_liste: parseInt(id) },
+    });
+
+
+    if (!canView && liste?.publique === 0) {
         return new Response(JSON.stringify({ message: "Non autorisé" }), {
             status: 401,
             headers: { "Content-Type": "application/json" },
         });
     } else {
         try {
-            const liste = await prisma.listes.findUnique({
-                where: { id_liste: parseInt(id) },
-            });
-
             if (!liste) {
                 return NextResponse.json({ error: "Liste non trouvée" }, { status: 404 });
             }
+            const listsWithArticles = await Promise.all(
+                [liste].map(async (list) => {
+                    const liens = await prisma.contiens.findMany({
+                        where: {
+                            id_liste: list.id_liste,
+                        },
+                    });
+
+                    // Récupère les articles et leur quantité associée
+                    const articles = await Promise.all(
+                        liens.map(async (lien) => {
+                            const article = await prisma.articles.findUnique({
+                                where: {
+                                    id_article: lien.id_article,
+                                },
+                            });
+
+                            // Inclure la quantité depuis 'liens'
+                            return {
+                                ...article,
+                                qte: lien.qte,
+                            };
+                        })
+                    );
+
+                    return { ...list, articles };
+                })
+            );
 
             return NextResponse.json(liste, { status: 200 });
         } catch (error:any) {

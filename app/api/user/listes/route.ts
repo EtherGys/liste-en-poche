@@ -53,11 +53,6 @@ export async function GET(req: NextRequest) {
             })
         );
 
-
-
-
-        console.log(listsWithArticles[1].articles);
-
         return new Response(JSON.stringify(listsWithArticles), {
             status: 200,
             headers: { "Content-Type": "application/json" },

@@ -1,4 +1,5 @@
-import React from 'react';
+import React from "react";
+import Link from "next/link"; // Importer le composant Link
 
 interface Article {
     id_article: string;
@@ -21,20 +22,19 @@ interface UserListsProps {
 }
 
 const UserLists: React.FC<UserListsProps> = ({ listes, onListeDelete, onArticleDelete, onArticleEdit }) => {
-
     // Fonction pour formater les dates
     const formatDate = (dateString: string): string => {
         const date = new Date(dateString);
         const options: Intl.DateTimeFormatOptions = {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
             hour12: false,
         };
 
-        return new Intl.DateTimeFormat('fr-FR', options).format(date).replace(',', ' à');
+        return new Intl.DateTimeFormat("fr-FR", options).format(date).replace(",", " à");
     };
 
     return (
@@ -45,10 +45,18 @@ const UserLists: React.FC<UserListsProps> = ({ listes, onListeDelete, onArticleD
                         <li key={liste.id_liste} className="border-b py-4">
                             <header className="flex justify-between items-center mb-2">
                                 <div>
-                                    <h3 className="text-base font-medium">{liste.nom}</h3>
+                                    {/* Le nom de la liste est maintenant un lien */}
+                                    <h3 className="text-base font-medium">
+                                        <Link
+                                            href={`/listes/${liste.id_liste}`}
+                                            className="text-blue-600 hover:underline"
+                                        >
+                                            {liste.nom}
+                                        </Link>
+                                    </h3>
                                     <span className="text-sm text-gray-500">
-                    Créée le {formatDate(liste.date_creation)}
-                  </span>
+                                        Créée le {formatDate(liste.date_creation)}
+                                    </span>
                                 </div>
                                 <button
                                     onClick={() => onListeDelete(liste.id_liste)}
