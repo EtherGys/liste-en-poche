@@ -59,7 +59,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="text-center text-gray-500 text-sm mt-2">
-        <p>&copy; 2025 Liste en Poche. ForEachAcadey. Tous droits réservés.</p>
+        <p>&copy; 2025 Liste en Poche. ForEachAcademy. Tous droits réservés.</p>
       </footer>
     </div>
   );
