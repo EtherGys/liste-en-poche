@@ -6,9 +6,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
 import NavigationLink from "../NavigationLink";
 
-
-
-
 interface RegisterForm {
   firstname: string;
   lastname: string;
@@ -27,51 +24,43 @@ export default function RegisterForm() {
     confirmPassword: "",
   });
   const [submitting, setSubmitting] = useState(false);
-  
+
   const notify = () =>
     toast.success("Succès", {
-    position: "top-right",
-    autoClose: 5000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-    theme: "light",
-  });
-  
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "light",
+    });
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<RegisterForm>();
-  
+
   function errorHandler(
     errorInput: FieldError | undefined,
     minNum: number,
     maxNum: number
   ) {
-    return (
-      <>
-      {errorInput?.type === "required" && (
-        <p className="ml-2 text-white text-xs font-light">
-        Le mot de passe est obligatoire
-        </p>
-      )}
-      {errorInput?.type === "minLength" && (
-        <p className="ml-2 text-white text-xs font-light">
-        Le mot de passe doit contenir au moins {minNum} caractères
-        </p>
-      )}
-      {errorInput?.type === "maxLength" && (
-        <p className="ml-2 text-white text-xs font-light">
-        Le mot de passe doit contenir au maximum {maxNum} caractères
-        </p>
-      )}
-      </>
-    );
+    return errorInput ? (
+      <p className="text-sm text-red-500 mt-1">
+        {errorInput.type === "required"
+          ? "Ce champ est obligatoire."
+          : errorInput.type === "minLength"
+          ? `Minimum ${minNum} caractères.`
+          : errorInput.type === "maxLength"
+          ? `Maximum ${maxNum} caractères.`
+          : "Erreur"}
+      </p>
+    ) : null;
   }
-  
+
   async function createUser() {
     setSubmitting(true);
     try {
@@ -96,200 +85,169 @@ export default function RegisterForm() {
       setSubmitting(false);
     } catch (error) {
       console.log(error);
-    } 
+    }
   }
-  
+
   const onSubmit: SubmitHandler<any> = () => {
     createUser();
   };
-  
+
   return (
-    <section className="min-h-screen flex items-center justify-center bg-top bg-no-repeat sm:bg-cover sm:bg-center sm:bg-[url('/pictures/IllusInscription.png')] bg-[url('/pictures/IllusRegistrationMobile.png')] bg-contain">
-    <ToastContainer />
-    <div className="container mx-auto mt-4 px-8 sm:fixed md:relative top-0 md:mt-0 bg-black pb-6 pt-6 sm:pt-6 sm:pb-6 w-9/12 sm:w-full max-w-xs sm:max-w-lg lg:max-w-xl 2xl:max-w-4xl text-center mx-4">
-    <div className="flex justify-center mt-8 sm:mt-10 sm:mt-4 text-xl sm:text-2xl font-playfair text-center text-white">
-    Inscription
-    </div>    
-    <div className="flex justify-center mt-2">
-    <NavigationLink
-    className="text-sm text-right text-white"
-    href={"/login"}
-    >
-    Vous avez déjà un compte ? 
-    <span className="pl-2 underline text-white">Connexion</span>
-    </NavigationLink>
-    </div>
-    
-    <form
-    onSubmit={handleSubmit(onSubmit)}
-    noValidate
-    className="mt-8 sm:mt-10 w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg flex flex-col gap-7 mx-auto"
-    >
-    {/* lastname */}
-    <label
-    className="block -mb-2 sm:mb-2 text-sm font-medium text-white"
-    htmlFor="lastname"
-    >
-    <input
-    type="text"
-    value={user.lastname}
-    {...register("lastname", {
-      required: true,
-      minLength: 2,
-      maxLength: 200,
-      onChange: (e: any) =>
-        setUser({
-        ...user,
-        lastname: e.target.value,
-      }),
-    })}
-    name="lastname"
-    id="lastname"
-    placeholder="Nom de famille"
-    required
-    className="bg-transparent border-0 border-b border-white text-white text-sm 2xl:text-base font-normal placeholder-white block w-full p-1 focus:ring-0 focus:border-white text-lg font-medium"
-    ></input>
-    {errorHandler(errors.lastname, 2, 200)}
-    </label>
-    
-    {/* firstname */}
-    <label
-    className="block -mb-2 sm:mb-2 text-sm font-medium text-white"
-    htmlFor="firstname"
-    >
-    <input
-    type="text"
-    value={user.firstname}
-    {...register("firstname", {
-      required: true,
-      minLength: 2,
-      maxLength: 200,
-      onChange: (e: any) =>
-        setUser({
-        ...user,
-        firstname: e.target.value,
-      }),
-    })}
-    name="firstname"
-    id="firstname"
-    placeholder="Prénom"
-    required
-    className="bg-transparent border-0 border-b border-white text-white text-sm 2xl:text-base font-normal placeholder-white block w-full p-1 focus:ring-0 focus:border-white text-lg font-medium"
-    ></input>
-    {errorHandler(errors.firstname, 2, 200)}
-    </label>
-    
-    
-    
-    {/* Email */}
-    <label
-    className="block -mb-2 sm:mb-2 text-sm font-medium text-white"
-    htmlFor="email"
-    >
-    <input
-    type="email"
-    value={user.email}
-    {...register("email", {
-      required: true,
-      minLength: 2,
-      maxLength: 150,
-      pattern: {
-        value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-        message: "L'email doit être valide.",
-      },
-      onChange: (e) =>
-        setUser({
-        ...user,
-        email: e.target.value,
-      }),
-    })}
-    name="email"
-    id="email"
-    placeholder="Email"
-    required
-    className="bg-transparent border-0 border-b border-white text-white text-sm 2xl:text-base font-normal placeholder-white block w-full p-1 focus:ring-0 focus:border-white text-lg font-medium"
-    />
-    {errorHandler(errors.email, 6, 255)}
-    {errors.email && (
-      <p role="alert" className="ml-2 text-white">
-      {errors.email.message}
-      </p>
-    )}
-    </label>
-    
-    
-    {/* Password */}
-    <label
-    className="block -mb-2 sm:mb-2 text-sm font-medium text-white"
-    htmlFor="password"
-    >
-    <input
-    type="password"
-    value={user.password}
-    {...register("password", {
-      required: true,
-      pattern: {
-        value:
-        /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$/,
-        message: `Erreur`,
-      },
-      minLength: 8,
-      maxLength: 30,
-      onChange: (e) => setUser({ ...user, password: e.target.value }),
-    })}
-    name="password"
-    id="password"
-    placeholder="Mot de passe"
-    className="bg-transparent border-0 border-b border-white text-white text-sm 2xl:text-base font-normal placeholder-white block w-full p-1 focus:ring-0 focus:border-white text-lg font-medium"
-    />
-    {errorHandler(errors.password, 8, 30)}
-    {errors.password && (
-      <p role="alert" className="ml-2 text-white">
-      {(errors.password as FieldError).message}
-      </p>
-    )}
-    </label>
-    
-    {/* Password Confirmation */}
-    <label
-    className="block -mb-2 sm:mb-2 text-sm font-medium text-white"
-    htmlFor="confirmPassword"
-    >
-    <input
-    type="password"
-    value={user.confirmPassword}
-    {...register("confirmPassword", {
-      required: true,
-      validate: (value) =>
-        value === user.password || "Erruer",
-      onChange: (e) =>
-        setUser({ ...user, confirmPassword: e.target.value }),
-    })}
-    name="confirmPassword"
-    id="confirmPassword"
-    placeholder="Confirmer le mot de passe"
-    className="bg-transparent border-0 border-b border-white text-white text-sm 2xl:text-base font-normal placeholder-white block w-full p-1 focus:ring-0 focus:border-white text-lg font-medium"
-    />
-    {errorHandler(errors.confirmPassword, 8, 30)}
-    {errors.confirmPassword && (
-      <p role="alert" className="ml-2 text-white">
-      {(errors.confirmPassword as FieldError).message}
-      </p>
-    )}
-    </label>
-    
-    {/* submit button */}
-    <div className="flex flex-col justify-center items-center mx-3 mt-2 sm:mt-10 gap-4 mb-5">
-    <button
-    type="submit"
-    disabled={submitting}
-    className="text-xs 2xl:text-base font-medium bg-white text-black py-1 px-6"
-    >
-    {submitting ? `En cours` : `Inscription`}
-    </button>
-    </div>
-    </form>
-    </div>
+    <section className="min-h-screen flex items-center justify-center bg-gray-100">
+      <ToastContainer />
+      <div className="bg-white shadow-md rounded-lg px-8 py-10 w-full max-w-md">
+        {/* Titre */}
+        <h1 className="text-3xl font-semibold text-center text-gray-800">Inscription</h1>
+
+        {/* Lien de connexion */}
+        <p className="text-center text-sm text-gray-600 mt-4">
+          Vous avez déjà un compte ?{" "}
+          <NavigationLink href="/login" className="text-red-500 underline">
+            Connexion
+          </NavigationLink>
+        </p>
+
+        {/* Formulaire */}
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          noValidate
+          className="flex flex-col gap-6 mt-6"
+        >
+          {/* Nom */}
+          <div>
+            <label htmlFor="lastname" className="block text-sm font-medium text-gray-700">
+              Nom
+            </label>
+            <input
+              type="text"
+              id="lastname"
+              value={user.lastname}
+              {...register("lastname", {
+                required: true,
+                minLength: 2,
+                maxLength: 200,
+                onChange: (e) =>
+                  setUser({
+                    ...user,
+                    lastname: e.target.value,
+                  }),
+              })}
+              placeholder="Votre nom"
+              className="mt-2 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 text-gray-900"
+            />
+            {errorHandler(errors.lastname, 2, 200)}
+          </div>
+
+          {/* Prénom */}
+          <div>
+            <label htmlFor="firstname" className="block text-sm font-medium text-gray-700">
+              Prénom
+            </label>
+            <input
+              type="text"
+              id="firstname"
+              value={user.firstname}
+              {...register("firstname", {
+                required: true,
+                minLength: 2,
+                maxLength: 200,
+                onChange: (e) =>
+                  setUser({
+                    ...user,
+                    firstname: e.target.value,
+                  }),
+              })}
+              placeholder="Votre prénom"
+              className="mt-2 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 text-gray-900"
+            />
+            {errorHandler(errors.firstname, 2, 200)}
+          </div>
+
+          {/* Email */}
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={user.email}
+              {...register("email", {
+                required: true,
+                pattern: {
+                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                  message: "L'email doit être valide.",
+                },
+                onChange: (e) =>
+                  setUser({
+                    ...user,
+                    email: e.target.value,
+                  }),
+              })}
+              placeholder="Votre adresse email"
+              className="mt-2 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 text-gray-900"
+            />
+            {errorHandler(errors.email, 6, 255)}
+          </div>
+
+          {/* Mot de passe */}
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+              Mot de passe
+            </label>
+            <input
+              type="password"
+              id="password"
+              value={user.password}
+              {...register("password", {
+                required: true,
+                pattern: {
+                  value:
+                    /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$/,
+                  message: `Le mot de passe doit contenir des majuscules, minuscules, chiffres et caractères spéciaux.`,
+                },
+                minLength: 8,
+                maxLength: 30,
+                onChange: (e) => setUser({ ...user, password: e.target.value }),
+              })}
+              placeholder="Votre mot de passe"
+              className="mt-2 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 text-gray-900"
+            />
+            {errorHandler(errors.password, 8, 30)}
+          </div>
+
+          {/* Confirmation du mot de passe */}
+          <div>
+            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+              Confirmer le mot de passe
+            </label>
+            <input
+              type="password"
+              id="confirmPassword"
+              value={user.confirmPassword}
+              {...register("confirmPassword", {
+                required: true,
+                validate: (value) =>
+                  value === user.password || "Les mots de passe doivent correspondre.",
+                onChange: (e) =>
+                  setUser({ ...user, confirmPassword: e.target.value }),
+              })}
+              placeholder="Confirmez votre mot de passe"
+              className="mt-2 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 text-gray-900"
+            />
+            {errorHandler(errors.confirmPassword, 8, 30)}
+          </div>
+
+          {/* Bouton de soumission */}
+          <button
+            type="submit"
+            disabled={submitting}
+            className="w-full py-2 px-4 bg-red-500 text-white text-sm font-medium rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
+          >
+            {submitting ? "En cours..." : "Inscription"}
+          </button>
+        </form>
+      </div>
     </section>
   );
 }

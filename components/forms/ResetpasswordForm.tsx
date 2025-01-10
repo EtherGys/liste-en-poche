@@ -86,15 +86,15 @@ export default function ResetpasswordForm() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white shadow-md rounded-lg px-8 py-10 w-full max-w-md">
-        <h1 className="text-3xl font-semibold text-center text-gray-800 mb-6">
+        <h1 className="text-3xl font-semibold text-center text-gray-800">
           Réinitialiser le mot de passe
         </h1>
 
         {successMessage && (
-          <p className="text-green-500 text-center mb-4">{successMessage}</p>
+          <p className="text-green-500 text-center text-sm mt-4">{successMessage}</p>
         )}
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 mt-6">
           {/* Email */}
           <div>
             <label
@@ -106,12 +106,13 @@ export default function ResetpasswordForm() {
             <input
               type="email"
               id="email"
+              placeholder="Votre adresse email"
               {...register("email", {
                 required: "L'email est requis.",
               })}
-              className={`mt-1 w-full px-4 py-2 border ${
+              className={`mt-2 w-full px-4 py-2 border ${
                 errors.email ? "border-red-500" : "border-gray-300"
-              } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+              } rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-gray-900`}
             />
             {errors.email && (
               <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
@@ -129,6 +130,7 @@ export default function ResetpasswordForm() {
             <input
               type="password"
               id="newPassword"
+              placeholder="Votre nouveau mot de passe"
               {...register("newPassword", {
                 required: true,
                 pattern: {
@@ -140,9 +142,9 @@ export default function ResetpasswordForm() {
                 minLength: 8,
                 maxLength: 30,
               })}
-              className={`mt-1 w-full px-4 py-2 border ${
+              className={`mt-2 w-full px-4 py-2 border ${
                 errors.newPassword ? "border-red-500" : "border-gray-300"
-              } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+              } rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-gray-900`}
             />
             {errorHandler(errors.newPassword, 8, 30)}
           </div>
@@ -158,15 +160,16 @@ export default function ResetpasswordForm() {
             <input
               type="password"
               id="confirmPassword"
+              placeholder="Confirmer le mot de passe"
               {...register("confirmPassword", {
                 required: true,
                 validate: (value) =>
                   value === watch("newPassword") ||
                   "Les mots de passe ne correspondent pas.",
               })}
-              className={`mt-1 w-full px-4 py-2 border ${
+              className={`mt-2 w-full px-4 py-2 border ${
                 errors.confirmPassword ? "border-red-500" : "border-gray-300"
-              } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+              } rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-gray-900`}
             />
             {errors.confirmPassword && (
               <p className="text-red-500 text-xs mt-1">
@@ -179,7 +182,7 @@ export default function ResetpasswordForm() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full py-2 px-4 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full py-2 px-4 bg-red-500 text-white text-sm font-medium rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
           >
             {submitting ? "Réinitialisation..." : "Réinitialiser"}
           </button>
