@@ -22,7 +22,7 @@ export default function Profile() {
     });
 
     const fetchListes = async (id: any) => {
-        const response = await fetch(`/api/possede`);
+        const response = await fetch(`/api/user/listes`);
         const listes = await response.json();
         // listes.forEach(async (liste: any) => {
         //   const response = await fetch(`/api/listes`);
