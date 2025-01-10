@@ -28,10 +28,8 @@ export async function GET() {
 export async function POST(req: NextRequest) {
     try {
         const userId = parseInt(await validateSession(req));
+        console.log(req.json())
         const {nom, publique, articles} = await req.json();
-
-        console.log(userId);
-        console.log(articles)
 
         const liste = await prisma.listes.create({
             data: {
@@ -40,6 +38,8 @@ export async function POST(req: NextRequest) {
                 publique
             }
         });
+
+
 
         // On ajoute les articles à la liste
         for (const article of articles) {

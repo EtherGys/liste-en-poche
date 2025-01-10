@@ -25,7 +25,7 @@ interface Liste {
 
 export default function NewListForm() {
   const router = useRouter();
-  const { register, handleSubmit, formState } = useForm<FormValues>();
+  const { register, handleSubmit, formState } = useForm<{ nom: string }>();
   const [articles, setArticles] = useState<Article[]>([]);
   const [submitting, setSubmitting] = useState(false);
 
@@ -70,13 +70,26 @@ export default function NewListForm() {
   };
 
 
-  const onSubmit = async (data: FormValues) => {
+
+
+  const onSubmit = async (data: { nom: string }) => {
     setSubmitting(true);
     try {
-      console.log(data);
-      data.liste.articles = articles;
-      await createList(data.liste);
 
+      if (articles.some((article) => !article.nom.trim())) {
+        toast.error("Tous les articles doivent avoir un nom.");
+        setSubmitting(false);
+        return;
+      }
+
+      const liste: Liste = {
+        id: 0, // placeholder, si l'ID est généré en base
+        nom: data.nom,
+        articles,
+      };
+      console.log(liste);
+
+      await createList(liste);
 
       toast.success("Liste créée avec succès !");
       router.push(`/dashboard`);
@@ -88,6 +101,7 @@ export default function NewListForm() {
     }
   };
 
+
   return (
       <>
         <ToastContainer />
@@ -96,10 +110,11 @@ export default function NewListForm() {
           <div className="mb-4">
             <label className="block font-bold mb-2">Nom de la liste</label>
             <input
-                {...register("liste", { required: true, minLength: 2 })}
+                {...register("nom", {required: true, minLength: 2})}
                 className="border w-full p-2"
                 placeholder="Nom de la liste"
             />
+
           </div>
 
           {/* Articles */}
