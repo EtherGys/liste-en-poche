@@ -40,30 +40,25 @@ const UserLists: React.FC<UserListsProps> = ({ listes, onListeDelete, onArticleD
     return (
         <section>
             {listes.length > 0 ? (
-                <ol className="list-decimal pl-6 space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {listes.map((liste) => (
-                        <li key={liste.id_liste} className="border-b py-4">
-                            <header className="flex justify-between items-center mb-2">
-                                <div>
-                                    {/* Le nom de la liste est maintenant un lien */}
-                                    <h3 className="text-base font-medium">
-                                        <Link
-                                            href={`/listes/${liste.id_liste}`}
-                                            className="text-blue-600 hover:underline"
-                                        >
-                                            {liste.nom}
-                                        </Link>
-                                    </h3>
-                                    <span className="text-sm text-gray-500">
-                                        Créée le {formatDate(liste.date_creation)}
-                                    </span>
-                                </div>
-                                <button
-                                    onClick={() => onListeDelete(liste.id_liste)}
-                                    className="bg-red-500 hover:bg-red-700 text-white text-xs py-1 px-3 rounded"
-                                >
-                                    Supprimer la liste
-                                </button>
+                        <div
+                            key={liste.id_liste}
+                            className="bg-transparent border border-gray-300 rounded-lg p-6 space-y-4 flex flex-col"
+                        >
+                            <header className="flex flex-col justify-center items-center mb-4">
+                                {/* Nom de la liste en rouge, centré, et cliquable */}
+                                <h3 className="text-lg font-medium text-red-600 text-center">
+                                    <Link
+                                        href={`/listes/${liste.id_liste}`}
+                                        className="hover:underline"
+                                    >
+                                        {liste.nom}
+                                    </Link>
+                                </h3>
+                                <span className="text-sm text-gray-500">
+                                    Créée le {formatDate(liste.date_creation)}
+                                </span>
                             </header>
 
                             {/* Articles associés à la liste */}
@@ -84,9 +79,19 @@ const UserLists: React.FC<UserListsProps> = ({ listes, onListeDelete, onArticleD
                             {!liste.articles?.length && (
                                 <p className="text-gray-500 text-sm">Aucun article associé à cette liste.</p>
                             )}
-                        </li>
+
+                            {/* Bouton supprimer la liste centré en bas */}
+                            <div className="mt-auto text-center">
+                                <button
+                                    onClick={() => onListeDelete(liste.id_liste)}
+                                    className="bg-red-500 hover:bg-red-700 text-white text-xs py-2 px-4 rounded"
+                                >
+                                    Supprimer la liste
+                                </button>
+                            </div>
+                        </div>
                     ))}
-                </ol>
+                </div>
             ) : (
                 <p className="text-center text-gray-500">Aucune liste disponible.</p>
             )}

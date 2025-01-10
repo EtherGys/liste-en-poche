@@ -68,8 +68,7 @@ function VoirListes() {
     return (
         <div className="min-h-screen flex-col items-center justify-center bg-top bg-no-repeat sm:bg-cover sm:bg-center sm:bg-[url('/pictures/connexionIllus.png')] bg-[url('/pictures/IllusConnexion-Mobile.png')] bg-contain">
             <div className="container mx-auto p-4">
-                <h1 className="text-2xl font-bold mb-4">Listes</h1>
-
+                
                 {/* Champ de recherche */}
                 <div className="mb-6">
                     <input
