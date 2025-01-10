@@ -53,20 +53,18 @@ export default function ResetpasswordForm() {
     );
   }
 
-  
-
   const onSubmit: SubmitHandler<ResetPasswordFormInputs> = async (data) => {
     const { email, newPassword } = data;
 
     setSubmitting(true);
     setSuccessMessage(null);
 
-	try {
-		const response = await fetch("/api/reset-password", {
-		  method: "PUT",
-		  headers: { "Content-Type": "application/json" },
-		  body: JSON.stringify({ email, newPassword }),
-		});
+    try {
+      const response = await fetch("/api/reset-password", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, newPassword }),
+      });
 
       if (!response.ok) {
         const resData = await response.json();
@@ -109,6 +107,10 @@ export default function ResetpasswordForm() {
               placeholder="Votre adresse email"
               {...register("email", {
                 required: "L'email est requis.",
+                pattern: {
+                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                  message: "Veuillez entrer une adresse email valide.",
+                },
               })}
               className={`mt-2 w-full px-4 py-2 border ${
                 errors.email ? "border-red-500" : "border-gray-300"
@@ -132,7 +134,7 @@ export default function ResetpasswordForm() {
               id="newPassword"
               placeholder="Votre nouveau mot de passe"
               {...register("newPassword", {
-                required: true,
+                required: "Le mot de passe est requis.",
                 pattern: {
                   value:
                     /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/,
@@ -162,7 +164,7 @@ export default function ResetpasswordForm() {
               id="confirmPassword"
               placeholder="Confirmer le mot de passe"
               {...register("confirmPassword", {
-                required: true,
+                required: "La confirmation du mot de passe est requise.",
                 validate: (value) =>
                   value === watch("newPassword") ||
                   "Les mots de passe ne correspondent pas.",

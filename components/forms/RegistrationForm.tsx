@@ -46,19 +46,23 @@ export default function RegisterForm() {
   function errorHandler(
     errorInput: FieldError | undefined,
     minNum: number,
-    maxNum: number
+    maxNum: number,
+    errorMessage: string = "Erreur"
   ) {
-    return errorInput ? (
-      <p className="text-sm text-red-500 mt-1">
-        {errorInput.type === "required"
-          ? "Ce champ est obligatoire."
-          : errorInput.type === "minLength"
-          ? `Minimum ${minNum} caractères.`
-          : errorInput.type === "maxLength"
-          ? `Maximum ${maxNum} caractères.`
-          : "Erreur"}
-      </p>
-    ) : null;
+    if (errorInput) {
+      if (errorInput.type === "required") {
+        return <p className="text-sm text-red-500 mt-1">Ce champ est obligatoire.</p>;
+      } else if (errorInput.type === "minLength") {
+        return <p className="text-sm text-red-500 mt-1">Minimum {minNum} caractères.</p>;
+      } else if (errorInput.type === "maxLength") {
+        return <p className="text-sm text-red-500 mt-1">Maximum {maxNum} caractères.</p>;
+      } else if (errorInput.type === "pattern") {
+        return <p className="text-sm text-red-500 mt-1">{errorMessage}</p>;
+      } else if (errorInput.type === "validate") {
+        return <p className="text-sm text-red-500 mt-1">{errorInput.message}</p>;
+      }
+    }
+    return null;
   }
 
   async function createUser() {
@@ -108,11 +112,7 @@ export default function RegisterForm() {
         </p>
 
         {/* Formulaire */}
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          noValidate
-          className="flex flex-col gap-6 mt-6"
-        >
+        <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-6 mt-6">
           {/* Nom */}
           <div>
             <label htmlFor="lastname" className="block text-sm font-medium text-gray-700">
@@ -173,10 +173,10 @@ export default function RegisterForm() {
               id="email"
               value={user.email}
               {...register("email", {
-                required: true,
+                required: "Ce champ est obligatoire.",
                 pattern: {
                   value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                  message: "L'email doit être valide.",
+                  message: "Veuillez entrer une adresse email valide.",
                 },
                 onChange: (e) =>
                   setUser({
@@ -187,7 +187,7 @@ export default function RegisterForm() {
               placeholder="Votre adresse email"
               className="mt-2 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 text-gray-900"
             />
-            {errorHandler(errors.email, 6, 255)}
+            {errorHandler(errors.email, 6, 255, "L'email doit être valide.")}
           </div>
 
           {/* Mot de passe */}
@@ -213,7 +213,7 @@ export default function RegisterForm() {
               placeholder="Votre mot de passe"
               className="mt-2 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 text-gray-900"
             />
-            {errorHandler(errors.password, 8, 30)}
+            {errorHandler(errors.password, 8, 30, `Le mot de passe doit contenir des majuscules, minuscules, chiffres et caractères spéciaux.`)}
           </div>
 
           {/* Confirmation du mot de passe */}
