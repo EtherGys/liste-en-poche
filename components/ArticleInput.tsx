@@ -1,51 +1,74 @@
-import { ChangeEvent } from "react";
+import React from "react";
+
 interface Article {
     id: number;
     nom: string;
     acheter: boolean;
+    qte: number;
 }
 
 interface ArticleInputProps {
     article: Article;
-    onChange: (id: number, value: any) => void;
+    onChange: (id: number, newNom: string, newQte: number, newAcheter: boolean) => void;
     onRemove: (id: number) => void;
 }
 
-export default function ArticleInput({
-                                         article,
-                                         onChange,
-                                         onRemove,
-                                     }: ArticleInputProps) {
+const ArticleInput: React.FC<ArticleInputProps> = ({ article, onChange, onRemove }) => {
+    const handleNomChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        onChange(article.id, e.target.value, article.qte, article.acheter);
+    };
+
+    const handleQteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        const newQte = value === "" ? 0 : parseInt(value, 10); // Gérer valeur vide
+        if (!isNaN(newQte)) {
+            onChange(article.id, article.nom, newQte, article.acheter);
+        }
+    };
+
+    const handleAcheterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        onChange(article.id, article.nom, article.qte, e.target.checked);
+    };
+
     return (
-        <div className="border rounded-md m-2 p-4 flex items-center gap-4">
-            {/* Champ de saisie du nom de l'article */}
+        <div className="flex items-center mb-4">
+            {/* Checkbox "Acheter" */}
+            <input
+                type="checkbox"
+                checked={article.acheter}
+                onChange={handleAcheterChange}
+                className="mr-2"
+            />
+
+            {/* Nom de l'article */}
             <input
                 type="text"
                 value={article.nom}
-                onChange={(e) => onChange(article.id, e.target.value)}
+                onChange={handleNomChange}
                 placeholder="Nom de l'article"
-                className="w-1/2 p-2 border rounded-md"
+                className="border p-2 flex-1 mr-2"
             />
 
-            {/* Case à cocher pour "Acheté" */}
-            <label className="flex items-center gap-2">
-                <input
-                    type="checkbox"
-                    checked={article.acheter}
-                    onChange={(e) => onChange(article.id, e.target.value)}
-                    className="w-4 h-4"
-                />
-                <span>Acheté</span>
-            </label>
+            {/* Quantité */}
+            <input
+                type="number"
+                value={article.qte}
+                onChange={handleQteChange}
+                min="0"
+                className="border p-2 w-20 text-center mr-2"
+                placeholder="Quantité"
+            />
 
             {/* Bouton pour supprimer l'article */}
             <button
                 type="button"
                 onClick={() => onRemove(article.id)}
-                className="text-red-500 border border-red-500 rounded p-2"
+                className="bg-red-500 text-white p-2 ml-2"
             >
                 Supprimer
             </button>
         </div>
     );
-}
+};
+
+export default ArticleInput;

@@ -2,6 +2,7 @@ interface Article {
     id: number;
     nom: string;
     acheter: boolean;
+    qte: number;
 }
 
 interface Liste {
@@ -11,14 +12,19 @@ interface Liste {
 }
 
 
-export async function createList(liste : Liste) {
+export async function createList(liste: Liste) {
     const response = await fetch("/api/listes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ liste}),
+        body: JSON.stringify(liste),
     });
-    return response.json();
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Erreur inconnue.");
+    }
+    return response;
 }
+
 
 export async function assignListToUser(listId: string, userId: string) {
     await fetch("/api/possede", {

@@ -28,8 +28,8 @@ export async function GET() {
 export async function POST(req: NextRequest) {
     try {
         const userId = parseInt(await validateSession(req));
-        console.log(req.json())
         const {nom, publique, articles} = await req.json();
+        console.log(nom, publique, articles);
 
         const liste = await prisma.listes.create({
             data: {
@@ -39,19 +39,32 @@ export async function POST(req: NextRequest) {
             }
         });
 
+        console.log("Liste créée");
+        for (const article of articles) {
+            console.log(article);
+            await prisma.articles.update({
+                where: {
+                    id_article: article.id,
+                },
+                data: {
+                    nom: article.nom,
+                }
+            });
+        }
 
-
+        console.log("Articles mis à jour");
         // On ajoute les articles à la liste
         for (const article of articles) {
             await prisma.contiens.create({
                 data: {
                     id_liste: liste.id_liste,
-                    id_article: article.id_article,
+                    id_article: article.id,
                     qte: article.qte
                 }
             });
         }
 
+        console.log("Articles ajoutés à la liste");
         return new Response(JSON.stringify(liste), {status: 201})
     } catch (error) {
         return new Response(JSON.stringify(error), {status: 500})
