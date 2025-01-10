@@ -16,6 +16,8 @@ export async function GET() {
                 }
             }
         );
+
+        console.log(listes);
         return new Response(JSON.stringify(listes), { status: 200 });
     } catch (error) {
         return new Response(JSON.stringify(error), { status: 500 });

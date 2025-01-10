@@ -1,23 +1,37 @@
-'use client'
+'use client';
 import { useState, useEffect } from "react";
-import UserLists from "@/components/UserLists";  // Assurez-vous que le chemin est correct
+import UserLists from "@/components/UserLists"; // Assurez-vous que le chemin est correct
 
 function VoirListes() {
-    const [listes, setListes] = useState<any[]>([]);
+    const [mesListes, setMesListes] = useState<any[]>([]);
+    const [listesPubliques, setListesPubliques] = useState<any[]>([]);
+    const [searchQuery, setSearchQuery] = useState<string>("");
 
-    // Fonction pour récupérer les listes depuis l'API
-    const fetchListes = async () => {
+    // Fonction pour récupérer les listes de l'utilisateur
+    const fetchMesListes = async () => {
         try {
             const response = await fetch(`/api/user/listes`);
             const data = await response.json();
-            setListes(data);
+            setMesListes(data);
         } catch (error) {
-            console.error("Erreur lors de la récupération des listes:", error);
+            console.error("Erreur lors de la récupération de mes listes :", error);
+        }
+    };
+
+    // Fonction pour récupérer les listes publiques
+    const fetchListesPubliques = async () => {
+        try {
+            const response = await fetch(`/api/listes`);
+            const data = await response.json();
+            setListesPubliques(data);
+        } catch (error) {
+            console.error("Erreur lors de la récupération des listes publiques :", error);
         }
     };
 
     useEffect(() => {
-        fetchListes(); // Charger les listes au montage de la page
+        fetchMesListes(); // Charger mes listes
+        fetchListesPubliques(); // Charger les listes publiques
     }, []);
 
     // Fonction pour supprimer une liste
@@ -30,40 +44,73 @@ function VoirListes() {
                 }),
             });
             if (response.ok) {
-                fetchListes(); // Rafraîchir la liste après suppression
+                fetchMesListes(); // Rafraîchir mes listes après suppression
             }
         } catch (error) {
-            console.error("Erreur lors de la suppression de la liste:", error);
+            console.error("Erreur lors de la suppression de la liste :", error);
         }
     };
 
-    // Fonction pour supprimer un article (à personnaliser si besoin)
-    const deleteArticle = async (id: string) => {
-        try {
-            // Implémenter la logique de suppression si nécessaire
-        } catch (error) {
-            console.error("Erreur lors de la suppression de l'article:", error);
-        }
+    // Gestion de la recherche
+    const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchQuery(event.target.value.toLowerCase());
     };
 
-    // Fonction pour éditer un article (à personnaliser si besoin)
-    const EditArticle = async (id: string) => {
-        try {
-            // Implémenter la logique d'édition si nécessaire
-        } catch (error) {
-            console.error("Erreur lors de l'édition de l'article:", error);
-        }
-    };
+    const filteredMesListes = mesListes.filter((liste) =>
+
+        liste.nom && liste.nom.toLowerCase().includes(searchQuery)
+    );
+
+    const filteredListesPubliques = listesPubliques.filter((liste) =>
+        liste.nom && liste.nom.toLowerCase().includes(searchQuery)
+    );
 
     return (
         <div className="min-h-screen flex-col items-center justify-center bg-top bg-no-repeat sm:bg-cover sm:bg-center sm:bg-[url('/pictures/connexionIllus.png')] bg-[url('/pictures/IllusConnexion-Mobile.png')] bg-contain">
-            {/* Intégration du composant UserLists */}
-            <UserLists
-                listes={listes}
-                onListeDelete={deleteListe}
-                onArticleDelete={deleteArticle}
-                onArticleEdit={EditArticle}
-            />
+            <div className="container mx-auto p-4">
+                <h1 className="text-2xl font-bold mb-4">Listes</h1>
+
+                {/* Champ de recherche */}
+                <div className="mb-6">
+                    <input
+                        type="text"
+                        placeholder="Rechercher une liste..."
+                        value={searchQuery}
+                        onChange={handleSearch}
+                        className="w-full p-2 border border-gray-300 rounded"
+                    />
+                </div>
+
+                {/* Mes listes */}
+                <section className="mb-8">
+                    <h2 className="text-xl font-semibold mb-4">Mes Listes</h2>
+                    {filteredMesListes.length > 0 ? (
+                        <UserLists
+                            listes={filteredMesListes}
+                            onListeDelete={deleteListe}
+                            onArticleDelete={() => {}}
+                            onArticleEdit={() => {}}
+                        />
+                    ) : (
+                        <p>Aucune liste trouvée.</p>
+                    )}
+                </section>
+
+                {/* Listes publiques */}
+                <section>
+                    <h2 className="text-xl font-semibold mb-4">Listes Publiques</h2>
+                    {filteredListesPubliques.length > 0 ? (
+                        <UserLists
+                            listes={filteredListesPubliques}
+                            onListeDelete={deleteListe}
+                            onArticleDelete={() => {}}
+                            onArticleEdit={() => {}}
+                        />
+                    ) : (
+                        <p>Aucune liste publique trouvée.</p>
+                    )}
+                </section>
+            </div>
         </div>
     );
 }

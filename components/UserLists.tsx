@@ -67,21 +67,6 @@ const UserLists: React.FC<UserListsProps> = ({ listes, onListeDelete, onArticleD
                                                 <div className="text-base font-medium">{article.nom}</div>
                                                 <div className="text-sm">Quantité : {article.qte}</div>
                                             </div>
-
-                                            <div className="space-x-2">
-                                                <button
-                                                    onClick={() => onArticleEdit(article.id_article)}
-                                                    className="bg-yellow-500 hover:bg-yellow-700 text-white text-xs py-1 px-3 rounded"
-                                                >
-                                                    Modifier
-                                                </button>
-                                                <button
-                                                    onClick={() => onArticleDelete(article.id_article)}
-                                                    className="bg-red-500 hover:bg-red-700 text-white text-xs py-1 px-3 rounded"
-                                                >
-                                                    Supprimer
-                                                </button>
-                                            </div>
                                         </li>
                                     ))}
                                 </ul>

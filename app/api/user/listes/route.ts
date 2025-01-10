@@ -1,5 +1,3 @@
-import {getServerSession} from "next-auth/next";
-import {authOptions} from "@/utils/auth";
 import prisma from "@/utils/prisma";
 import {NextRequest} from "next/server";
 import {validateSession} from "@/utils/validateSession";
@@ -27,14 +25,38 @@ export async function GET(req: NextRequest) {
 
         const listsWithArticles = await Promise.all(
             lists.map(async (list) => {
-                const articles = await prisma.contiens.findMany({
+                // Récupère les liens avec les articles associés à la liste
+                const liens = await prisma.contiens.findMany({
                     where: {
                         id_liste: list.id_liste,
                     },
                 });
+
+                // Récupère les articles et leur quantité associée
+                const articles = await Promise.all(
+                    liens.map(async (lien) => {
+                        const article = await prisma.articles.findUnique({
+                            where: {
+                                id_article: lien.id_article,
+                            },
+                        });
+
+                        // Inclure la quantité depuis 'liens'
+                        return {
+                            ...article,
+                            qte: lien.qte,
+                        };
+                    })
+                );
+
                 return { ...list, articles };
             })
         );
+
+
+
+
+        console.log(listsWithArticles[1].articles);
 
         return new Response(JSON.stringify(listsWithArticles), {
             status: 200,
