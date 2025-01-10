@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ArticleInput from "@components/ArticleInput";
-import { assignListToUser, createArticles, createList } from "@components/forms/apiHelper";
+import { createList } from "@components/forms/apiHelper";
 
 interface Article {
   id: number;
@@ -18,10 +18,6 @@ interface Liste {
   id: number;
   nom: string;
   articles: Article[];
-}
-
-interface FormValues {
-  liste: Liste;
 }
 
 export default function NewListForm() {
@@ -61,20 +57,24 @@ export default function NewListForm() {
     }
   };
 
-
   // Supprimer un article
   const removeArticle = (id: number) => {
     setArticles((prev) => prev.filter((article) => article.id !== id));
   };
 
   // Mise à jour d'un article
-  const updateArticle = (id: number, newNom: string, newQte: number, newAcheter: boolean) => {
+  const updateArticle = (
+    id: number,
+    newNom: string,
+    newQte: number,
+    newAcheter: boolean
+  ) => {
     setArticles((prev) => {
       console.log("Update article", id, newNom, newQte, newAcheter);
       return prev.map((article) =>
-          article.id === id
-              ? { ...article, nom: newNom, qte: newQte, acheter: newAcheter }
-              : article
+        article.id === id
+          ? { ...article, nom: newNom, qte: newQte, acheter: newAcheter }
+          : article
       );
     });
   };
@@ -107,19 +107,23 @@ export default function NewListForm() {
   };
 
   return (
-      <>
-        <ToastContainer />
-        <form onSubmit={handleSubmit(onSubmit)} className="p-4 border rounded">
+    <>
+      <ToastContainer />
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-6">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="w-full max-w-lg space-y-6 p-6 bg-white rounded-lg shadow-lg"
+        >
           {/* Nom de la liste */}
           <section className="mb-4">
-            <label htmlFor="nom" className="block font-bold mb-2">
+            <label htmlFor="nom" className="block font-bold mb-2 text-lg">
               Nom de la liste
             </label>
             <input
-                {...register("nom", { required: true, minLength: 2 })}
-                className="border w-full p-2"
-                id="nom"
-                placeholder="Nom de la liste"
+              {...register("nom", { required: true, minLength: 2 })}
+              className="border w-full p-2 rounded-md focus:ring-2 focus:ring-red-500"
+              id="nom"
+              placeholder="Nom de la liste"
             />
           </section>
 
@@ -127,21 +131,21 @@ export default function NewListForm() {
           <section>
             <ul className="space-y-4">
               {articles.map((article) => (
-                  <li key={article.id}>
-                    <ArticleInput
-                        article={article}
-                        onChange={updateArticle}
-                        onRemove={removeArticle}
-                    />
-                  </li>
+                <li key={article.id}>
+                  <ArticleInput
+                    article={article}
+                    onChange={updateArticle}
+                    onRemove={removeArticle}
+                  />
+                </li>
               ))}
             </ul>
 
             {/* Ajouter un article */}
             <button
-                type="button"
-                onClick={addArticle}
-                className="text-blue-500 mt-4 block"
+              type="button"
+              onClick={addArticle}
+              className="text-red-500 mt-4 block"
             >
               Ajouter un article
             </button>
@@ -150,14 +154,15 @@ export default function NewListForm() {
           {/* Bouton de soumission */}
           <section className="mt-4">
             <button
-                type="submit"
-                disabled={submitting}
-                className="bg-blue-500 text-white p-2 w-full"
+              type="submit"
+              disabled={submitting}
+              className="bg-red-500 text-white p-2 w-full rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
             >
-              {submitting ? "En cours..." : "Créer"}
+              {submitting ? "En cours..." : "Créer la liste"}
             </button>
           </section>
         </form>
-      </>
+      </div>
+    </>
   );
 }
