@@ -13,13 +13,13 @@ export default function LoginForm() {
   });
   const { data: session, status } = useSession();
   const router = useRouter();
-  
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<any>();
-  
+
   const onSubmit: SubmitHandler<any> = async () => {
     try {
       const res = await signIn("credentials", {
@@ -27,26 +27,29 @@ export default function LoginForm() {
         password: user.password,
         redirect: false,
       });
-      
-      
+
       if (res?.error) {
         setError(true);
-        router.push('/login')
+        router.push('/login');
         return;
       }
-      router.push('/profil')
-      
+      router.push('/profil');
+
     } catch (error) {
       console.log(error);
     }
   };
-  
+
   function errorHandler(errorInput: any) {
-    return errorInput?.type === "required" ? (
-      <p className="text-sm text-red-500">Ce champ est requis</p>
-    ) : null;
+    if (errorInput?.type === "required") {
+      return <p className="text-sm text-red-500">Ce champ est requis</p>;
+    }
+    if (errorInput?.type === "pattern") {
+      return <p className="text-sm text-red-500">L'email doit être valide.</p>;
+    }
+    return null;
   }
-  
+
   return (
     <section className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white shadow-md rounded-lg px-8 py-10 w-full max-w-md">
@@ -114,7 +117,7 @@ export default function LoginForm() {
             </p>
           </div>
 
-          {/* Message d'erreur */}
+          {/* Message d'erreur général */}
           {error && <p className="text-sm text-red-500 text-center">Identifiants incorrects</p>}
 
           {/* Bouton de soumission */}
