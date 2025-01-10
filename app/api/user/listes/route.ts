@@ -25,7 +25,18 @@ export async function GET(req: NextRequest) {
             },
         });
 
-        return new Response(JSON.stringify(lists), {
+        const listsWithArticles = await Promise.all(
+            lists.map(async (list) => {
+                const articles = await prisma.contiens.findMany({
+                    where: {
+                        id_liste: list.id_liste,
+                    },
+                });
+                return { ...list, articles };
+            })
+        );
+
+        return new Response(JSON.stringify(listsWithArticles), {
             status: 200,
             headers: { "Content-Type": "application/json" },
         });
