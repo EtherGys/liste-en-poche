@@ -84,7 +84,7 @@ export default function LoginForm() {
                 },
                 onChange: (e) => setUser({ ...user, email: e.target.value }),
               })}
-              placeholder="Votre email"
+              placeholder="Votre adresse email"
               className="mt-2 w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 text-gray-900"
             />
             {errorHandler(errors.email)}
