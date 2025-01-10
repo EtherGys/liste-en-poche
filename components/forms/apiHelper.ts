@@ -1,12 +1,12 @@
 interface Article {
-    id: number;
+    id_article: number;
     nom: string;
     acheter: boolean;
     qte: number;
 }
 
 interface Liste {
-    id: number;
+    id_liste: number;
     nom: string;
     articles: Article[];
 }
@@ -43,4 +43,17 @@ export async function createArticles(listId: string, articles: any[]) {
         })
     );
     await Promise.all(requests);
+}
+
+export async function updateList(liste: Liste) {
+    const response = await fetch(`/api/listes/${liste.id_liste}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(liste),
+    });
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Erreur inconnue.");
+    }
+    return response;
 }

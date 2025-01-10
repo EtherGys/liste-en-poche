@@ -1,7 +1,7 @@
 import React from "react";
 
 interface Article {
-    id: number;
+    id_article: number;
     nom: string;
     acheter: boolean;
     qte: number;
@@ -15,19 +15,19 @@ interface ArticleInputProps {
 
 const ArticleInput: React.FC<ArticleInputProps> = ({ article, onChange, onRemove }) => {
     const handleNomChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        onChange(article.id, e.target.value, article.qte, article.acheter);
+        onChange(article.id_article, e.target.value, article.qte, article.acheter);
     };
 
     const handleQteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         const newQte = value === "" ? 0 : parseInt(value, 10); // Gérer valeur vide
         if (!isNaN(newQte)) {
-            onChange(article.id, article.nom, newQte, article.acheter);
+            onChange(article.id_article, article.nom, newQte, article.acheter);
         }
     };
 
     const handleAcheterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        onChange(article.id, article.nom, article.qte, e.target.checked);
+        onChange(article.id_article, article.nom, article.qte, e.target.checked);
     };
 
     return (
@@ -62,7 +62,7 @@ const ArticleInput: React.FC<ArticleInputProps> = ({ article, onChange, onRemove
             {/* Bouton pour supprimer l'article */}
             <button
                 type="button"
-                onClick={() => onRemove(article.id)}
+                onClick={() => onRemove(article.id_article)}
                 className="bg-red-500 text-white p-2 ml-2"
             >
                 Supprimer

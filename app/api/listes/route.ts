@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
             data: {
                 nom,
                 createur: userId,
-                publique
+                publique : publique ? 1 : 0
             }
         });
 
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
             console.log(article);
             await prisma.articles.update({
                 where: {
-                    id_article: article.id,
+                    id_article: article.id_article,
                 },
                 data: {
                     nom: article.nom,
@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
             await prisma.contiens.create({
                 data: {
                     id_liste: liste.id_liste,
-                    id_article: article.id,
+                    id_article: article.id_article,
                     qte: article.qte
                 }
             });

@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from "react";
-import UserLists from "@/components/UserLists"; // Assurez-vous que le chemin est correct
+import UserLists from "@/components/UserLists";
+import { ToastContainer, toast } from "react-toastify";
 
 function VoirListes() {
     const [mesListes, setMesListes] = useState<any[]>([]);
@@ -48,6 +49,7 @@ function VoirListes() {
             }
         } catch (error) {
             console.error("Erreur lors de la suppression de la liste :", error);
+            toast.error("Erreur lors de la suppression de la liste.");
         }
     };
 

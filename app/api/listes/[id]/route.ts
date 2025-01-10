@@ -9,7 +9,7 @@ import {validateSession} from "@/utils/validateSession";
  */
 export async function GET(req: NextRequest, params: any) {
     const userId = parseInt(await validateSession(req));
-    const id  = params.params.id;
+    const id  = await params.params.id;
 
     const canView = await prisma.possede.findFirst({
         where: {
@@ -125,12 +125,11 @@ export async function PUT(req: NextRequest, params: any) {
 export async function DELETE(req: NextRequest, params: any) {
     const userId = parseInt(await validateSession(req));
 
-    const id = await params.params.id;
+    const { id_liste } = await req.json();
 
     try {
-
         const liste = await prisma.listes.findUnique({
-            where: { id_liste: parseInt(id) },
+            where: { id_liste: parseInt(id_liste) },
         });
 
         if (!liste) {
@@ -141,10 +140,6 @@ export async function DELETE(req: NextRequest, params: any) {
             return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
         }
 
-        await prisma.listes.delete({
-            where: { id_liste: parseInt(id) },
-        });
-
         if (!liste) {
             return NextResponse.json({ error: "Liste non trouvée" }, { status: 404 });
         }
@@ -154,11 +149,12 @@ export async function DELETE(req: NextRequest, params: any) {
         }
 
         await prisma.listes.delete({
-            where: { id_liste: Number(id) },
+            where: { id_liste: Number(id_liste) },
         });
 
         return NextResponse.json({ message: "Liste supprimée" }, { status: 200 });
     } catch (error:any) {
+        console.log(error.message);
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 }

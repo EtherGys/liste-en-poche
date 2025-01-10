@@ -1,119 +1,173 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useParams } from "next/navigation"; // Utilisation de useParams pour accéder aux paramètres dynamiques d'URL
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import ArticleInput from "@components/ArticleInput";
+import { createList, updateList } from "@components/forms/apiHelper";
 
 interface Article {
-    id_article: string;
+    id_article: number;
     nom: string;
+    acheter: boolean;
     qte: number;
 }
 
 interface Liste {
-    id_liste: string;
+    id_liste: number;
     nom: string;
-    date_creation: string;
-    articles?: Article[];
+    articles: Article[];
 }
 
-const ListeDetail = () => {
-    const { id } = useParams() as { id: string };  // Utilisation de useParams pour récupérer l'ID
-    const [liste, setListe] = useState<Liste | null>(null);
-    const [canEdit, setCanEdit] = useState(false); // Détermine si l'utilisateur peut modifier
+export default function EditListForm({ id }: { id: string }) {
+    const router = useRouter();
+    const { register, handleSubmit, formState } = useForm<{ nom: string }>();
+    const [articles, setArticles] = useState<Article[]>([]);
+    const [submitting, setSubmitting] = useState(false);
+    const [currentList, setCurrentList] = useState<Liste | null>(null);
 
-    const fetchListeDetails = async () => {
-        try {
+    // Récupérer la liste existante et les articles associés au montage
+    useEffect(() => {
+        const fetchListData = async () => {
             const response = await fetch(`/api/listes/${id}`);
-            if (response.status === 401) {
-                console.error("Non autorisé");
-                // Si l'utilisateur n'est pas autorisé, rediriger ailleurs ou afficher une erreur
-                return;
-            }
             if (response.ok) {
                 const data = await response.json();
-                setListe(data);
+                setCurrentList(data);
+                setArticles(data.articles);  // Initialiser les articles dans le formulaire
+            } else {
+                toast.error("Erreur lors du chargement de la liste.");
             }
-        } catch (error) {
-            console.error("Erreur lors de la récupération des détails de la liste :", error);
-        }
-    };
+        };
 
-    const checkPermissions = async () => {
-        try {
-            const response = await fetch(`/api/listes/${id}`);
-            if (response.status === 200) {
-                setCanEdit(true);
-            }
-        } catch (error) {
-            console.error("Erreur lors de la vérification des permissions :", error);
-        }
-    };
-
-    useEffect(() => {
-        if (id) {
-            fetchListeDetails();
-            checkPermissions();
-        }
+        fetchListData();
     }, [id]);
 
-    if (!liste) {
-        return <div>Chargement des détails de la liste...</div>;
-    }
+    const addArticle = async () => {
+        try {
+            const response = await fetch("/api/articles", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ nom: "", acheter: false }),
+            });
+
+            if (!response.ok) {
+                throw new Error("Erreur lors de la création de l'article.");
+            }
+
+            const newArticle = await response.json();
+            setArticles((prev) => [
+                ...prev,
+                { id_article: newArticle.id_article, nom: "", acheter: false, qte: 1 },
+            ]);
+        } catch (error) {
+            toast.error("Erreur lors de l'ajout d'un article.");
+        }
+    };
+
+    const removeArticle = (id_article: number) => {
+        setArticles((prev) => prev.filter((article) => article.id_article !== id_article));
+    };
+
+    const updateArticle = (
+        id_article: number,
+        newNom: string,
+        newQte: number,
+        newAcheter: boolean
+    ) => {
+        setArticles((prev) => {
+            return prev.map((article) =>
+                article.id_article === id_article
+                    ? { ...article, nom: newNom, qte: newQte, acheter: newAcheter }
+                    : article
+            );
+        });
+    };
+
+    const onSubmit = async (data: { nom: string }) => {
+        setSubmitting(true);
+        try {
+            if (articles.some((article) => !article.nom.trim())) {
+                toast.error("Tous les articles doivent avoir un nom.");
+                setSubmitting(false);
+                return;
+            }
+
+            const updatedListe: Liste = {
+                id_liste: currentList?.id_liste || 0,
+                nom: data.nom,
+                articles,
+            };
+
+            await updateList(updatedListe);
+
+            toast.success("Liste mise à jour avec succès !");
+            router.push(`/dashboard`);
+        } catch (error) {
+            toast.error("Erreur lors de la mise à jour de la liste.");
+        } finally {
+            setSubmitting(false);
+        }
+    };
 
     return (
-        <div className="p-6">
-            <header className="mb-6">
-                <h1 className="text-2xl font-bold">{liste.nom}</h1>
-                <p className="text-gray-500">
-                    Créée le {new Date(liste.date_creation).toLocaleString("fr-FR", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                })}
-                </p>
-            </header>
+        <>
+            <ToastContainer />
+            <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-6">
+                {currentList && (
+                    <form
+                        onSubmit={handleSubmit(onSubmit)}
+                        className="w-full max-w-lg space-y-6 p-6 bg-white rounded-lg shadow-lg"
+                    >
+                        <section className="mb-4">
+                            <label htmlFor="nom" className="block font-bold mb-2 text-lg">
+                                Nom de la liste
+                            </label>
+                            <input
+                                {...register("nom", { required: true, minLength: 2 })}
+                                className="border w-full p-2 rounded-md focus:ring-2 focus:ring-red-500"
+                                id="nom"
+                                defaultValue={currentList.nom}  // Initialiser avec le nom existant
+                                placeholder="Nom de la liste"
+                            />
+                        </section>
 
-            {/* Mode édition */}
-            {canEdit ? (
-                <div>
-                    <h2 className="text-xl font-semibold">Mode édition</h2>
-                    <ul className="list-disc pl-6 mt-4">
-                        {liste.articles?.map((article) => (
-                            <li key={article.id_article} className="mb-2">
-                                <span className="font-medium">{article.nom}</span> - Quantité :{" "}
-                                <input
-                                    type="number"
-                                    className="border rounded p-1 w-16"
-                                    defaultValue={article.qte}
-                                />
-                            </li>
-                        ))}
-                    </ul>
-                    <button className="bg-blue-500 text-white py-2 px-4 rounded mt-4 hover:bg-blue-700">
-                        Sauvegarder les modifications
-                    </button>
-                </div>
-            ) : (
-                // Mode consultation
-                <div>
-                    <h2 className="text-xl font-semibold">Mode consultation</h2>
-                    {liste.articles && liste.articles.length > 0 ? (
-                        <ul className="list-disc pl-6 mt-4">
-                            {liste.articles.map((article) => (
-                                <li key={article.id_article}>
-                                    <span className="font-medium">{article.nom}</span> - Quantité : {article.qte}
-                                </li>
-                            ))}
-                        </ul>
-                    ) : (
-                        <p className="text-gray-500 mt-4">Aucun article dans cette liste.</p>
-                    )}
-                </div>
-            )}
-        </div>
+                        <section>
+                            <ul className="space-y-4">
+                                {articles.map((article) => (
+                                    <li key={article.id_article}>
+                                        <ArticleInput
+                                            article={article}
+                                            onChange={updateArticle}
+                                            onRemove={removeArticle}
+                                        />
+                                    </li>
+                                ))}
+                            </ul>
+                            <button
+                                type="button"
+                                onClick={addArticle}
+                                className="text-red-500 mt-4 block"
+                            >
+                                Ajouter un article
+                            </button>
+                        </section>
+
+                        <section className="mt-4">
+                            <button
+                                type="submit"
+                                disabled={submitting}
+                                className="bg-red-500 text-white p-2 w-full rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
+                            >
+                                {submitting ? "En cours..." : "Mettre à jour la liste"}
+                            </button>
+                        </section>
+                    </form>
+                )}
+            </div>
+        </>
     );
-};
-
-export default ListeDetail;
+}
